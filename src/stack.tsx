@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Appbar, Avatar, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ChatWindow } from './chatWindow';
 
 import { BottomTabs } from './bottomTabs';
 import { Details } from './details';
@@ -55,7 +56,7 @@ export const StackNavigator = () => {
               )}
               <Appbar.Content
                 title={
-                  title === 'Feed' ? (
+                  title === 'ChatWindow' ? (
                     <Image
                       style={{ width: 40, height: 40 }}
                       source={require('../assets/onem-logo.png')}
@@ -76,21 +77,21 @@ export const StackNavigator = () => {
       }}
     >
       <Stack.Screen
-        name="FeedList"
-        component={BottomTabs}
+        name="ChatWindow"
+        component={ChatWindow}
         options={({ route }) => {
           console.log('!@# options', { route });
           const routeName = route.state
             ? route.state.routes[route.state.index].name
-            : 'Feed';
+            : 'ChatWindow';
           return { headerTitle: routeName };
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Details"
         component={Details}
         options={{ headerTitle: 'Tweet' }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };
