@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Image, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Appbar, Avatar, useTheme } from 'react-native-paper';
@@ -56,11 +56,9 @@ export const StackNavigator = () => {
               <Appbar.Content
                 title={
                   title === 'Feed' ? (
-                    <MaterialCommunityIcons
-                      style={{ marginRight: 10 }}
-                      name="twitter"
-                      size={40}
-                      color={theme.colors.primary}
+                    <Image
+                      style={{ width: 40, height: 40 }}
+                      source={require('../assets/onem-logo.png')}
                     />
                   ) : (
                     title

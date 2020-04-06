@@ -9,6 +9,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   Avatar,
+  Button,
   Caption,
   Drawer,
   Paragraph,
@@ -66,50 +67,19 @@ export function DrawerContent(props: Props) {
           <Caption style={styles.caption}>@trensik</Caption>
           <View style={styles.row}>
             <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                202
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwuje</Caption>
-            </View>
-            <View style={styles.section}>
-              <Paragraph style={[styles.paragraph, styles.caption]}>
-                159
-              </Paragraph>
-              <Caption style={styles.caption}>Obserwujący</Caption>
+              <Button
+                style={styles.buttonFullWidth}
+                color="blue"
+                uppercase={false}
+                accessibilityLabel="Login or Sign up"
+                mode="contained"
+                onPress={() => console.log('Pressed')}
+              >
+                Login / Sign Up
+              </Button>
             </View>
           </View>
         </View>
-        <Drawer.Section style={styles.drawerSection}>
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="account-outline"
-                color={color}
-                size={size}
-              />
-            )}
-            label="Profile"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons name="tune" color={color} size={size} />
-            )}
-            label="Preferences"
-            onPress={() => {}}
-          />
-          <DrawerItem
-            icon={({ color, size }) => (
-              <MaterialCommunityIcons
-                name="bookmark-outline"
-                color={color}
-                size={size}
-              />
-            )}
-            label="Bookmarks"
-            onPress={() => {}}
-          />
-        </Drawer.Section>
         <Drawer.Section title="Preferences">
           <TouchableRipple onPress={toggleTheme}>
             <View style={styles.preference}>
@@ -134,6 +104,9 @@ export function DrawerContent(props: Props) {
 }
 
 const styles = StyleSheet.create({
+  buttonFullWidth: {
+    width: "100%"
+  },
   drawerContent: {
     flex: 1,
   },

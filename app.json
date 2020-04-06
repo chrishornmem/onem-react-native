@@ -12,9 +12,9 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/twitter.png",
+      "image": "./assets/onem.png",
       "resizeMode": "cover",
-      "backgroundColor": "#1ba1f2"
+      "backgroundColor": "#ff0000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
