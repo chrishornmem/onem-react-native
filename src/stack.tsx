@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Appbar, Avatar, useTheme } from 'react-native-paper';
@@ -17,7 +17,7 @@ export const StackNavigator = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName="FeedList"
+      initialRouteName="ChatWindow"
       headerMode="screen"
       screenOptions={{
         header: ({ scene, previous, navigation }) => {
@@ -38,39 +38,29 @@ export const StackNavigator = () => {
                   onPress={navigation.goBack}
                   color={theme.colors.primary}
                 />
-              ) : (
-                <TouchableOpacity
-                  style={{ marginLeft: 10 }}
-                  onPress={() => {
-                    ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
-                  }}
-                >
-                  <Avatar.Image
-                    size={40}
-                    source={{
-                      uri:
-                        'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-                    }}
-                  />
-                </TouchableOpacity>
+              ) : ( <></>
+                // <TouchableOpacity
+                //   style={{ marginLeft: 10 }}
+                //   onPress={() => {
+                //     ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
+                //   }}
+                // >
+                //   <Avatar.Image
+                //     size={40}
+                //     style={{padding:0}}
+                //     source={{
+                //       uri:
+                //         'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                //     }}
+                //   />
+                // </TouchableOpacity>
               )}
-              <Appbar.Content
-                title={
-                  title === 'ChatWindow' ? (
-                    <Image
-                      style={{ width: 40, height: 40 }}
-                      source={require('../assets/onem-logo.png')}
-                    />
-                  ) : (
-                    title
-                  )
-                }
-                titleStyle={{
-                  fontSize: 18,
-                  fontWeight: 'bold',
-                  color: theme.colors.primary,
-                }}
-              />
+              {/* <View style={{textAlign:'center'}}>
+                <Image
+                  style={{display:'flex', width:40, height:40}}
+                  source={require('../assets/onem-logo.png')}
+                />
+              </View> */}
             </Appbar.Header>
           );
         },
