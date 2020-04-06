@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { Appbar, Avatar, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, Button, Text, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ChatWindow } from './chatWindow';
 
@@ -11,6 +11,13 @@ import { Details } from './details';
 import { StackNavigatorParamlist } from './types';
 
 const Stack = createStackNavigator<StackNavigatorParamlist>();
+
+const ContentTitle = ({ title, style }) => (
+  <Appbar.Content
+    title={<Text style={style}> {title} </Text>}
+    style={{ alignItems: 'center' }}
+  />
+);
 
 export const StackNavigator = () => {
   const theme = useTheme();
@@ -30,38 +37,25 @@ export const StackNavigator = () => {
               : scene.route.name;
 
           return (
-            <Appbar.Header
-              theme={{ colors: { primary: theme.colors.surface } }}
-            >
-              {previous ? (
-                <Appbar.BackAction
-                  onPress={navigation.goBack}
-                  color={theme.colors.primary}
+            <>
+              <Appbar.Header
+                style={{ marginLeft: 0, paddingLeft: 0 }}
+                theme={{ colors: { primary: theme.colors.surface } }}
+              >
+                <Appbar.Action
+                  accessibilityLabel="Back"
+                  color="black"
+                  size={36}
+                  style={{ marginLeft: 0, paddingLeft: 0 }}
+                  icon="chevron-left"
+                  onPress={() => {}}
                 />
-              ) : ( <></>
-                // <TouchableOpacity
-                //   style={{ marginLeft: 10 }}
-                //   onPress={() => {
-                //     ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
-                //   }}
-                // >
-                //   <Avatar.Image
-                //     size={40}
-                //     style={{padding:0}}
-                //     source={{
-                //       uri:
-                //         'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-                //     }}
-                //   />
-                // </TouchableOpacity>
-              )}
-              {/* <View style={{textAlign:'center'}}>
-                <Image
-                  style={{display:'flex', width:40, height:40}}
-                  source={require('../assets/onem-logo.png')}
-                />
-              </View> */}
-            </Appbar.Header>
+                <ContentTitle title={'Title'} style={{ color: 'black' }} />
+                <Button mode="text" onPress={() => this.submit()}>
+                  DONE
+                </Button>
+              </Appbar.Header>
+            </>
           );
         },
       }}
