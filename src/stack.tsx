@@ -52,7 +52,7 @@ export const StackNavigator = () => {
                 />
                 <ContentTitle title={'Title'} style={{ color: 'black' }} />
                 <Button mode="text" onPress={() => this.submit()}>
-                  DONE
+                  DONE1
                 </Button>
               </Appbar.Header>
             </>
