@@ -1,58 +1,55 @@
 import React from 'react';
-import { Appbar, Avatar, useTheme, Portal, FAB } from 'react-native-paper';
-import { StyleSheet, FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import {
+  Appbar,
+  Avatar,
+  FAB,
+  Button,
+  Text,
+  useTheme,
+} from 'react-native-paper';
+import { StyleSheet, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 
 import { StackNavigationProp } from '@react-navigation/stack';
-
-import { Twitt } from './components/twitt';
-import { twitts } from './data';
 import { StackNavigatorParamlist } from './types';
 
 import { useSafeArea } from 'react-native-safe-area-context';
-import {
-  useIsFocused,
-  RouteProp,
-  useNavigation,
-} from '@react-navigation/native';
-
-type TwittProps = React.ComponentProps<typeof Twitt>;
-
-function renderItem({ item }: { item: TwittProps }) {
-  return <Twitt {...item} />;
-}
-
-function keyExtractor(item: TwittProps) {
-  return item.id.toString();
-}
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 type Props = {
   navigation?: StackNavigationProp<StackNavigatorParamlist>;
 };
 
+const ContentTitle = ({ title, style }) => (
+  <Appbar.Content
+    title={<Text style={style}> {title} </Text>}
+    style={{ alignItems: 'center' }}
+  />
+);
+
 const Feed = (props: Props) => {
   const theme = useTheme();
 
-  const data = twitts.map(twittProps => ({
-    ...twittProps,
-    onPress: () =>
-      props.navigation &&
-      props.navigation.push('Details', {
-        ...twittProps,
-      }),
-  }));
-
   return (
-    <FlatList
-      contentContainerStyle={{ backgroundColor: theme.colors.background }}
-      style={{ backgroundColor: theme.colors.background }}
-      data={data}
-      renderItem={renderItem}
-      keyExtractor={keyExtractor}
-      ItemSeparatorComponent={() => (
-        <View style={{ height: StyleSheet.hairlineWidth }} />
-      )}
-    />
+    <>
+      <Appbar.Header
+        style={{ marginLeft: 0, paddingLeft: 0 }}
+        theme={{ colors: { primary: theme.colors.surface } }}
+      >
+        <Appbar.Action
+          accessibilityLabel="Back"
+          color="black"
+          size={36}
+          style={{ marginLeft: 0, paddingLeft: 0 }}
+          icon="chevron-left"
+          onPress={() => {}}
+        />
+        <ContentTitle title={'Title'} style={{ color: 'black' }} />
+        <Button mode="text" onPress={() => this.submit()}>
+          DONE1
+        </Button>
+      </Appbar.Header>
+    </>
   );
 };
 
@@ -65,6 +62,12 @@ export const ChatWindow = (props: Props) => {
 
   let iconClosed = 'dots-vertical';
   let iconOpen = 'dots-horizontal';
+
+  React.useEffect(() => {
+    {
+      console.log(safeArea);
+    }
+  },[]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -128,14 +131,14 @@ export const ChatWindow = (props: Props) => {
           />
         </View>
       </Appbar>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-      },
+  container: {
+    flex: 1,
+  },
   bottom: {
     position: 'absolute',
     left: 0,
@@ -147,19 +150,19 @@ const styles = StyleSheet.create({
     //flexDirection: 'row'
   },
   fab: {
-  //  display: 'flex',
+    //  display: 'flex',
     //    alignSelf: 'flex-end',
     // color: 'black',
-     height: 40,
-     width: 40,
-     borderRadius: 20,
-     elevation: 0,
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+    elevation: 0,
     backgroundColor: 'transparent',
-     alignItems: 'center',
-     justifyContent: 'center',
-     margin: 0,
-     //marginHorizontal: 0,
-     marginVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 0,
+    //marginHorizontal: 0,
+    marginVertical: 8,
   },
   wrapper: {
     flexDirection: 'row',
