@@ -4,7 +4,7 @@ import {
   DefaultTheme,
   DarkTheme,
 } from 'react-native-paper';
-import { I18nManager } from 'react-native';
+import { I18nManager, SafeAreaView, StyleSheet } from 'react-native';
 import { Updates } from 'expo';
 import { useColorScheme } from 'react-native-appearance';
 
@@ -38,22 +38,30 @@ export const Main = () => {
   );
 
   return (
-    <PreferencesContext.Provider value={preferences}>
-      <PaperProvider
-        theme={
-          theme === 'light'
-            ? {
+    <SafeAreaView style={styles.container}>
+      <PreferencesContext.Provider value={preferences}>
+        <PaperProvider
+          theme={
+            theme === 'light'
+              ? {
                 ...DefaultTheme,
                 colors: { ...DefaultTheme.colors },
               }
-            : {
+              : {
                 ...DarkTheme,
                 colors: { ...DarkTheme.colors },
               }
-        }
-      >
-        <RootNavigator />
-      </PaperProvider>
-    </PreferencesContext.Provider>
+          }
+        >
+          <RootNavigator />
+        </PaperProvider>
+      </PreferencesContext.Provider>
+    </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -1,0 +1,3 @@
+[submodule "src/react-client-shared"]
+	path = src/react-client-shared
+	url = https://github.com/chrishornmem/react-client-shared.git

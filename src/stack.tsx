@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 // import { DrawerNavigationProp } from '@react-navigation/drawer';
 // import { Appbar, Avatar, Button, Text, useTheme } from 'react-native-paper';
 // import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ChatWindow } from './chatWindow';
+import { ChatWindow } from './components/ChatWindow';
 
 // import { BottomTabs } from './bottomTabs';
 // import { Details } from './details';
