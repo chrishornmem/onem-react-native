@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 
-import { Appbar, Avatar, FAB, useTheme } from 'react-native-paper';
+import { Appbar, Avatar, FAB, Portal, useTheme } from 'react-native-paper';
 
 export const Footer = (props: Props) => {
   const theme = useTheme();
@@ -19,21 +19,21 @@ export const Footer = (props: Props) => {
       style={styles.bottom}
       theme={{ colors: { primary: theme.colors.surface } }}
     >
-      <View style={styles.wrapper}>
-        <TouchableOpacity
-          style={{ marginLeft: 10 }}
-          onPress={() => {
-            ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
+      <TouchableOpacity
+        style={{ marginLeft: 10 }}
+        onPress={() => {
+          ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
+        }}
+      >
+        <Avatar.Image
+          size={40}
+          source={{
+            uri:
+              'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
           }}
-        >
-          <Avatar.Image
-            size={40}
-            source={{
-              uri:
-                'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-            }}
-          />
-        </TouchableOpacity>
+        />
+      </TouchableOpacity>
+      <Portal>
         <FAB.Group
           open={isOpen}
           actions={[
@@ -70,9 +70,9 @@ export const Footer = (props: Props) => {
           //   }}
           //style={{ paddingBottom: 12 }}
           fabStyle={styles.fab}
-          onPress={() => {}}
+          onPress={() => { }}
         />
-      </View>
+      </Portal>
     </Appbar>
   );
 };
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     //paddingHorizontal: 0,
     // alignItems: 'center',
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     //flexDirection: 'row'
   },
   fab: {
@@ -99,9 +99,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 0,
+  //  margin: 0,
     //marginHorizontal: 0,
-    marginVertical: 8,
+    //  marginVertical: 8,
   },
   wrapper: {
     flexDirection: 'row',

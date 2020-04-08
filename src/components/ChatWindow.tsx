@@ -1,11 +1,11 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackNavigatorParamlist } from '../types';
-import { Card, Text, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Card, useTheme } from 'react-native-paper';
 
 import usePersistedReducer from '../react-client-shared/hooks/usePersistedReducer';
 
@@ -305,6 +305,7 @@ export const ChatWindow = (props: Props) => {
       {console.log(messageState)}
       <Header />
       <Card style={styles.cardWrapper}>
+
         {messageState.requesting && (
           <View style={[styles.container, styles.horizontal]}>
             <ActivityIndicator size="large" />
@@ -313,7 +314,7 @@ export const ChatWindow = (props: Props) => {
         {messageState.hasError ? (
           <Error message={messageState.message} />
         ) : (
-          <>
+          <Card.Content style={styles.container}>
             {!messageState.requesting &&
             messageState.message &&
             messageState.message.mtText ? (
@@ -326,7 +327,7 @@ export const ChatWindow = (props: Props) => {
                 tokenAction={tokenAction}
               />
             ) : null}
-          </>
+          </Card.Content>
         )}
       </Card>
       <Footer />
@@ -337,7 +338,7 @@ export const ChatWindow = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+  //  justifyContent: 'center',
   },
   horizontal: {
     flexDirection: 'row',
