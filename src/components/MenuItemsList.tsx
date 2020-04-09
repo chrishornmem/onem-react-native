@@ -1,14 +1,22 @@
 import React, { Suspense } from 'react';
-import { Image, StyleSheet, View, Dimensions } from 'react-native';
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Video } from 'expo-av';
 
-import { Button, Paragraph } from 'react-native-paper';
+import { Button, Caption, Card, Paragraph } from 'react-native-paper';
 
 import { MtText, MenuItem } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
-
 import { isVideoUrl } from '../react-client-shared/utils';
+import { emitToServer } from '../react-client-shared/utils/Socket';
 
+import { Header } from './Header';
+import { Footer } from './Footer';
 import { ResponsiveImage } from './ResponsiveImage';
 
 const SwitchMenuItem: React.FC<{
@@ -18,6 +26,13 @@ const SwitchMenuItem: React.FC<{
   dispatch: any;
   index: number;
 }> = ({ item, token, tokenAction, dispatch, index }) => {
+  const clicked = (i: Number) => {
+    dispatch({
+      type: 'REQUESTING',
+    });
+    emitToServer({ action_type: 'menuOptionSelected', option_index: index });
+  };
+
   switch (item.type) {
     case 'option':
       return (
@@ -29,13 +44,13 @@ const SwitchMenuItem: React.FC<{
                 uppercase={false}
                 accessibilityLabel={item.description}
                 mode="outlined"
-                onPress={() => console.log('Pressed')}
+                onPress={() => clicked(index)}
               >
                 {item.description}
               </Button>
             </>
           ) : (
-            <>
+            <TouchableOpacity onPress={() => clicked(index)}>
               {!isVideoUrl(item.src) ? (
                 <Image
                   style={{ borderRadius: 5, width: '100%' }}
@@ -48,7 +63,8 @@ const SwitchMenuItem: React.FC<{
                   source={{ uri: item.src }}
                 ></Video>
               )}
-            </>
+              <Caption>{item.description}</Caption>
+            </TouchableOpacity>
           )}
         </>
       );
@@ -61,14 +77,13 @@ const SwitchMenuItem: React.FC<{
           ) : (
             <>
               {!isVideoUrl(item.src) ? (
-                <View style={{paddingRight:16}}>
+                <View style={{ paddingRight: 16 }}>
                   <ResponsiveImage
                     width={Dimensions.get('window').width - 32}
                     uri={item.src}
                     style={{ borderRadius: 5 }}
                   />
                 </View>
-
               ) : (
                 //                 <View>
                 //                   <Image
@@ -130,21 +145,31 @@ const MenuItemsList: React.FC<{
 }> = ({ mtText, dispatch, token, tokenAction, userAction, user }) => {
   return (
     <>
-      {mtText && mtText.body
-        ? (mtText.body as MenuItem[]).map((item: MenuItem, i: number) => {
-            return (
-              <View style={styles.item} key={i}>
-                <SwitchMenuItem
-                  token={token}
-                  tokenAction={tokenAction}
-                  dispatch={dispatch}
-                  item={item}
-                  index={i}
-                />
-              </View>
-            );
-          })
-        : null}
+      <Header
+        title={mtText.header}
+        leftHidden={mtText.__is_root}
+        dispatch={dispatch}
+      />
+      <Card style={styles.cardWrapper}>
+        <Card.Content style={styles.container}>
+          {mtText && mtText.body
+            ? (mtText.body as MenuItem[]).map((item: MenuItem, i: number) => {
+                return (
+                  <View style={styles.item} key={i}>
+                    <SwitchMenuItem
+                      token={token}
+                      tokenAction={tokenAction}
+                      dispatch={dispatch}
+                      item={item}
+                      index={i}
+                    />
+                  </View>
+                );
+              })
+            : null}
+        </Card.Content>
+      </Card>
+      <Footer />
     </>
   );
 };
@@ -157,5 +182,14 @@ const styles = StyleSheet.create({
   },
   item: {
     paddingVertical: 10,
+  },
+  container: {
+    flex: 1,
+    //  justifyContent: 'center',
+  },
+  cardWrapper: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });

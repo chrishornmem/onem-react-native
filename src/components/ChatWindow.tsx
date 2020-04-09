@@ -5,12 +5,10 @@ import { StyleSheet, View } from 'react-native';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackNavigatorParamlist } from '../types';
-import { ActivityIndicator, Card, useTheme } from 'react-native-paper';
+import { ActivityIndicator, useTheme } from 'react-native-paper';
 
 import usePersistedReducer from '../react-client-shared/hooks/usePersistedReducer';
 
-import { Header } from './Header';
-import { Footer } from './Footer';
 import { Error } from './Error';
 import { MessageScreen } from './MessageScreen';
 
@@ -303,9 +301,7 @@ export const ChatWindow = (props: Props) => {
     <>
       {console.log('messageState')}
       {console.log(messageState)}
-      <Header />
-      <Card style={styles.cardWrapper}>
-
+      <View style={styles.mainWrapper}>
         {messageState.requesting && (
           <View style={[styles.container, styles.horizontal]}>
             <ActivityIndicator size="large" />
@@ -314,7 +310,7 @@ export const ChatWindow = (props: Props) => {
         {messageState.hasError ? (
           <Error message={messageState.message} />
         ) : (
-          <Card.Content style={styles.container}>
+          <View style={styles.container}>
             {!messageState.requesting &&
             messageState.message &&
             messageState.message.mtText ? (
@@ -327,10 +323,9 @@ export const ChatWindow = (props: Props) => {
                 tokenAction={tokenAction}
               />
             ) : null}
-          </Card.Content>
+          </View>
         )}
-      </Card>
-      <Footer />
+      </View>
     </>
   );
 };
@@ -345,7 +340,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     padding: 10,
   },
-  cardWrapper: {
+  mainWrapper: {
     flex: 1,
     width: '100%',
     height: '100%',

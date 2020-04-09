@@ -2,9 +2,9 @@ import React from 'react';
 import { Image, StyleProp } from 'react-native';
 
 export const ResponsiveImage: React.FC<{
-  width?: number,
-  height?: number,
-  uri: string,
+  width?: number;
+  height?: number;
+  uri: string;
   style: StyleProp<T>;
 }> = ({ width, height, uri, style }) => {
   const [widthVal, setWidthVal] = React.useState(width);
@@ -25,12 +25,16 @@ export const ResponsiveImage: React.FC<{
         setWidthVal(0);
       }
     );
-  }, [heightVal, uri, widthVal]);
+  }, []);
 
   return (
-    <Image
-      source={{ uri: uri }}
-      style={[{ height: heightVal, width: widthVal }, style]}
-    />
+    <>
+      {heightVal && widthVal && uri ? (
+        <Image
+          source={{ uri: uri }}
+          style={[{ height: heightVal, width: widthVal }, style]}
+        />
+      ) : null}
+    </>
   );
 };
