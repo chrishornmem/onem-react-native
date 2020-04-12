@@ -36,6 +36,7 @@ export const Footer = (props: Props) => {
       <Portal>
         <FAB.Group
           open={isOpen}
+          small
           actions={[
             {
               icon: 'star',
@@ -63,14 +64,14 @@ export const Footer = (props: Props) => {
           visible={isFocused}
           icon={isOpen ? iconOpen : iconClosed}
           color={theme.colors.text}
-          //   theme={{
-          //     colors: {
-          //       background: 'white',
-          //     },
-          //   }}
+          // theme={{
+          //   colors: {
+          //     background: theme.colors.surface,
+          //   },
+          // }}
           //style={{ paddingBottom: 12 }}
           fabStyle={styles.fab}
-          onPress={() => { }}
+          onPress={() => {}}
         />
       </Portal>
     </Appbar>
@@ -92,14 +93,14 @@ const styles = StyleSheet.create({
     //  display: 'flex',
     //    alignSelf: 'flex-end',
     // color: 'black',
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    // height: 40,
+    // width: 40,
+    // borderRadius: 20,
     elevation: 0,
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-  //  margin: 0,
+    //  margin: 0,
     //marginHorizontal: 0,
     //  marginVertical: 8,
   },

@@ -1,11 +1,18 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  BackHandler,
+} from 'react-native';
+import { useSafeArea } from 'react-native-safe-area-context';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { StackNavigatorParamlist } from '../types';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 
 import usePersistedReducer from '../react-client-shared/hooks/usePersistedReducer';
 
@@ -48,6 +55,7 @@ let initialized = false;
 export const ChatWindow = (props: Props) => {
   //const safeArea = useSafeArea();
   const theme = useTheme();
+  const insets = useSafeArea();
 
   const [connectState, connectAction] = React.useReducer(socketReducer, {
     connectStatus: 'start',
@@ -333,7 +341,8 @@ export const ChatWindow = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  //  justifyContent: 'center',
+    position: 'relative',
+    //  justifyContent: 'center',
   },
   horizontal: {
     flexDirection: 'row',

@@ -4,11 +4,12 @@ import {
   DefaultTheme,
   DarkTheme,
 } from 'react-native-paper';
-import { I18nManager, SafeAreaView, StyleSheet } from 'react-native';
+import { I18nManager, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Updates } from 'expo';
 import { useColorScheme } from 'react-native-appearance';
 
 import { RootNavigator } from './rootNavigator';
+
 import { PreferencesContext } from './context/preferencesContext';
 
 export const Main = () => {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image, StyleProp } from 'react-native';
+import { ActivityIndicator, Image, StyleProp } from 'react-native';
+// import { Image } from 'react-native-elements';
 
 export const ResponsiveImage: React.FC<{
   width?: number;
@@ -29,6 +30,7 @@ export const ResponsiveImage: React.FC<{
 
   return (
     <>
+      {(!heightVal || !widthVal) && <ActivityIndicator />}
       {heightVal && widthVal && uri ? (
         <Image
           source={{ uri: uri }}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSafeArea } from 'react-native-safe-area-context';
 
 import { Appbar, Button, useTheme } from 'react-native-paper';
 import { emitToServer } from '../react-client-shared/utils/Socket';
@@ -37,6 +38,8 @@ export const Header = (props: {
     ? props.rightVariant.toLowerCase()
     : 'home';
 
+    const insets = useSafeArea();
+
   const backEmitProps = {
     action_type: ONEM_ACTION.SYSTEM_VERB_SELECTED,
     name: 'back',
@@ -71,6 +74,10 @@ export const Header = (props: {
         theme={{ colors: { primary: theme.colors.surface } }}
         style={{
           justifyContent: 'space-between',
+          elevation: 1,
+          // marginTop: insets.top,
+          // marginLeft: insets.left,
+          // marginRight: insets.right,
         }}
       >
         {leftVariant === 'back' && !leftHidden ? (
@@ -106,6 +113,18 @@ export const Header = (props: {
             icon="home-outline"
             onPress={() => handleHome()}
           />
+        ) : null}
+        {rightVariant === 'submit' && !rightHidden ? (
+          <Button
+            mode="contained"
+            disabled={rightDisabled}
+            style={{ margin: 0, padding: 0, alignItems: 'flex-end' }}
+            onPress={() =>
+              typeof handleSubmit === 'function' ? handleSubmit() : {}
+            }
+          >
+            Submit
+          </Button>
         ) : null}
       </Appbar>
     </>

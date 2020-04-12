@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Video } from 'expo-av';
+import { ScrollView } from 'react-native';
 
 import { Button, Caption, Card, Paragraph } from 'react-native-paper';
 
@@ -50,22 +51,22 @@ const SwitchMenuItem: React.FC<{
               </Button>
             </>
           ) : (
-            <TouchableOpacity onPress={() => clicked(index)}>
-              {!isVideoUrl(item.src) ? (
-                <Image
-                  style={{ borderRadius: 5, width: '100%' }}
-                  source={{ uri: item.src }}
-                  resizeMode="contain"
-                />
-              ) : (
-                <Video
-                  style={{ borderRadius: 5, width: '100%' }}
-                  source={{ uri: item.src }}
-                ></Video>
-              )}
-              <Caption>{item.description}</Caption>
-            </TouchableOpacity>
-          )}
+              <TouchableOpacity onPress={() => clicked(index)}>
+                {!isVideoUrl(item.src) ? (
+                  <Image
+                    style={{ borderRadius: 5, width: '100%' }}
+                    source={{ uri: item.src }}
+                    resizeMode="contain"
+                  />
+                ) : (
+                    <Video
+                      style={{ borderRadius: 5, width: '100%' }}
+                      source={{ uri: item.src }}
+                    ></Video>
+                  )}
+                <Caption>{item.description}</Caption>
+              </TouchableOpacity>
+            )}
         </>
       );
 
@@ -75,30 +76,30 @@ const SwitchMenuItem: React.FC<{
           {item.description && !item.src ? (
             <Paragraph>{item.description}</Paragraph>
           ) : (
-            <>
-              {!isVideoUrl(item.src) ? (
-                <View style={{ paddingRight: 16 }}>
-                  <ResponsiveImage
-                    width={Dimensions.get('window').width - 32}
-                    uri={item.src}
-                    style={{ borderRadius: 5 }}
-                  />
-                </View>
-              ) : (
-                //                 <View>
-                //                   <Image
-                // //                    style={{ borderRadius: 5, width: '100%', height: 100, resizeMode: 'cover' }}
-                //                     source={{ uri: item.src }}
-                //                   />
-                //                 </View>
+              <>
+                {!isVideoUrl(item.src) ? (
+                  <View style={{ paddingRight: 16 }}>
+                    <ResponsiveImage
+                      width={Dimensions.get('window').width - 32}
+                      uri={item.src}
+                      style={{ borderRadius: 5 }}
+                    />
+                  </View>
+                ) : (
+                    //                 <View>
+                    //                   <Image
+                    // //                    style={{ borderRadius: 5, width: '100%', height: 100, resizeMode: 'cover' }}
+                    //                     source={{ uri: item.src }}
+                    //                   />
+                    //                 </View>
 
-                <Video
-                  style={{ borderRadius: 5, width: '100%' }}
-                  source={{ uri: item.src }}
-                ></Video>
-              )}
-            </>
-          )}
+                    <Video
+                      style={{ borderRadius: 5, width: '100%' }}
+                      source={{ uri: item.src }}
+                    ></Video>
+                  )}
+              </>
+            )}
         </>
       );
 
@@ -152,8 +153,9 @@ const MenuItemsList: React.FC<{
       />
       <Card style={styles.cardWrapper}>
         <Card.Content style={styles.container}>
-          {mtText && mtText.body
-            ? (mtText.body as MenuItem[]).map((item: MenuItem, i: number) => {
+          <ScrollView>
+            {mtText && mtText.body
+              ? (mtText.body as MenuItem[]).map((item: MenuItem, i: number) => {
                 return (
                   <View style={styles.item} key={i}>
                     <SwitchMenuItem
@@ -166,7 +168,8 @@ const MenuItemsList: React.FC<{
                   </View>
                 );
               })
-            : null}
+              : null}
+          </ScrollView>
         </Card.Content>
       </Card>
       <Footer />

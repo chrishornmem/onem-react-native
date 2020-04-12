@@ -18,7 +18,7 @@ export const MessageScreen: React.FC<{
       {isForm(message) ? (
         <FormItemsList
           dispatch={messageAction}
-          mtText={message.mtText}
+          mtText={message.mtText as MtText}
           token={token}
           tokenAction={tokenAction}
           userAction={userAction}
