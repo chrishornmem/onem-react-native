@@ -7,6 +7,8 @@ import { useTheme } from 'react-native-paper';
 import { StackNavigator } from './stack';
 import { DrawerContent } from './drawerContent';
 
+import { LoginScreen } from './components/LoginScreen';
+
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator = () => {
@@ -17,6 +19,7 @@ export const RootNavigator = () => {
     <NavigationContainer theme={navigationTheme}>
       <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
         <Drawer.Screen name="Home" component={StackNavigator} />
+        <Drawer.Screen name="Login" component={LoginScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );

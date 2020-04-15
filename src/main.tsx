@@ -4,7 +4,7 @@ import {
   DefaultTheme,
   DarkTheme,
 } from 'react-native-paper';
-import { I18nManager, SafeAreaView, StyleSheet, View } from 'react-native';
+import { I18nManager, SafeAreaView, StyleSheet, Platform, View } from 'react-native';
 import { Updates } from 'expo';
 import { useColorScheme } from 'react-native-appearance';
 
@@ -64,5 +64,6 @@ export const Main = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
 });

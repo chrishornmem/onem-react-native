@@ -39,12 +39,10 @@ export const StackNavigator = () => {
       <Stack.Screen
         name="ChatWindow"
         component={ChatWindow}
-        // options={({ route }) => {
-        //   const routeName = route.state
-        //     ? route.state.routes[route.state.index].name
-        //     : 'ChatWindow';
-        //   return { headerTitle: routeName };
-        // }}
+        options={({ route }) => {
+          const routeName = 'ChatWindow';
+          return { headerTitle: routeName };
+        }}
       />
       {/* <Stack.Screen
         name="Details"

@@ -20,6 +20,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 import { PreferencesContext } from './context/preferencesContext';
 
@@ -27,6 +28,8 @@ type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
+  const navigation = useNavigation();
+
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
   );
@@ -73,7 +76,13 @@ export function DrawerContent(props: Props) {
                 uppercase={false}
                 accessibilityLabel="Login or Sign up"
                 mode="contained"
-                onPress={() => console.log('Pressed')}
+                onPress={() =>
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: 'Login'
+                    })
+                  )
+                }
               >
                 Login / Sign Up
               </Button>
@@ -105,7 +114,7 @@ export function DrawerContent(props: Props) {
 
 const styles = StyleSheet.create({
   buttonFullWidth: {
-    width: "100%"
+    width: '100%',
   },
   drawerContent: {
     flex: 1,

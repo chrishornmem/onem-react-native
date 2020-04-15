@@ -176,16 +176,16 @@ export const ChatWindow = (props: Props) => {
           logger.error('reconnect:');
           logger.error(reason);
 
-          connectAction({
-            type: 'CONNECTING',
-            payload: null,
-          });
-          messageAction({
-            type: 'RECONNECT',
-          });
-          if (tokenState.token) {
-            reconnect(tokenState.token);
-          }
+          // connectAction({
+          //   type: 'CONNECTING',
+          //   payload: null,
+          // });
+          // messageAction({
+          //   type: 'RECONNECT',
+          // });
+          // if (tokenState.token) {
+          //   reconnect(tokenState.token);
+          // }
         })
         .on('disconnect', function(reason: string) {
           logger.error('disconnected:');
@@ -307,8 +307,6 @@ export const ChatWindow = (props: Props) => {
 
   return (
     <>
-      {console.log('messageState')}
-      {console.log(messageState)}
       <View style={styles.mainWrapper}>
         {messageState.requesting && (
           <View style={[styles.container, styles.horizontal]}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { FloatingAction } from 'react-native-floating-action';
 
 import { Appbar, Avatar, FAB, Portal, useTheme } from 'react-native-paper';
 
@@ -33,47 +34,52 @@ export const Footer = (props: Props) => {
           }}
         />
       </TouchableOpacity>
-      <Portal>
-        <FAB.Group
-          open={isOpen}
-          small
+      <View style={{ paddingTop: 80 }}>
+        <FloatingAction
+          //   open={isOpen}
+          buttonSize={40}
+          distanceToEdge={20}
           actions={[
             {
-              icon: 'star',
-              label: 'Add',
-              onPress: () => console.log('Pressed add'),
+              text: 'Accessibility',
+              icon: require('../../assets/onem-logo.png'),
+              name: 'bt_accessibility',
+              //    position: 2
             },
             {
-              icon: 'star',
-              label: 'Star',
-              onPress: () => console.log('Pressed star'),
+              text: 'Language',
+              icon: require('../../assets/onem-logo.png'),
+              name: 'bt_language',
+              //    position: 1
             },
             {
-              icon: 'email',
-              label: 'Email',
-              onPress: () => console.log('Pressed email'),
+              text: 'Location',
+              icon: require('../../assets/onem-logo.png'),
+              name: 'bt_room',
+              //     position: 3
             },
             {
-              icon: 'bell',
-              label: 'Remind',
-              onPress: () => console.log('Pressed notifications'),
+              text: 'Video',
+              icon: require('../../assets/onem-logo.png'),
+              name: 'bt_videocam',
+              //     position: 4
             },
           ]}
-          accessibilityLabel="verbs"
-          onStateChange={({ open }) => setOpen(open)}
+          //    accessibilityLabel="verbs"
+          //    onStateChange={({ open }) => setOpen(open)}
           visible={isFocused}
-          icon={isOpen ? iconOpen : iconClosed}
-          color={theme.colors.text}
+          //icon={isOpen ? iconOpen : iconClosed}
+          //color={theme.colors.text}
           // theme={{
           //   colors: {
           //     background: theme.colors.surface,
           //   },
           // }}
           //style={{ paddingBottom: 12 }}
-          fabStyle={styles.fab}
-          onPress={() => {}}
+          //fabStyle={styles.fab}
+          //onPress={() => {}}
         />
-      </Portal>
+      </View>
     </Appbar>
   );
 };
@@ -87,6 +93,7 @@ const styles = StyleSheet.create({
     //paddingHorizontal: 0,
     // alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     //flexDirection: 'row'
   },
   fab: {

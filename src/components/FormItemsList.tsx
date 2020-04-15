@@ -290,8 +290,6 @@ function ItemList({
                 <Card.Content style={styles.container}>
                   <ScrollView>
                     {body.map((item: FormItem, i: any) => {
-                      {console.log("item")}
-                      {console.log(item)}
                       return (
                         <View key={i}>
                           {/* <Suspense fallback={<></>}>
