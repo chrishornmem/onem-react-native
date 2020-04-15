@@ -28,7 +28,6 @@ type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
-  const navigation = useNavigation();
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
@@ -77,7 +76,7 @@ export function DrawerContent(props: Props) {
                 accessibilityLabel="Login or Sign up"
                 mode="contained"
                 onPress={() =>
-                  navigation.dispatch(
+                  props.navigation.dispatch(
                     CommonActions.navigate({
                       name: 'Login'
                     })

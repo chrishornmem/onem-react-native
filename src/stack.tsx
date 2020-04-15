@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ChatWindow } from './components/ChatWindow';
 
 // import { BottomTabs } from './bottomTabs';
-// import { Details } from './details';
+import { LoginScreen } from './components/LoginScreen';
 import { StackNavigatorParamlist } from './types';
 
 const Stack = createStackNavigator<StackNavigatorParamlist>();
@@ -44,11 +44,11 @@ export const StackNavigator = () => {
           return { headerTitle: routeName };
         }}
       />
-      {/* <Stack.Screen
-        name="Details"
-        component={Details}
-        options={{ headerTitle: 'Tweet' }}
-      /> */}
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ headerTitle: 'Login' }}
+      />
     </Stack.Navigator>
   );
 };

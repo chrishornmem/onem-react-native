@@ -1,6 +1,7 @@
 export type StackNavigatorParamlist = {
   ChatWindow: undefined;
   FeedList: undefined;
+  Login: undefined,
   Details: {
     id: number;
     name: string;
