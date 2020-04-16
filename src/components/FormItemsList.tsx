@@ -21,15 +21,11 @@ function ItemList({
   dispatch,
   token,
   tokenAction,
-  userAction,
-  user,
 }: {
   mtText: MtText | string;
   dispatch: any;
   token: string;
   tokenAction: any;
-  userAction: any;
-  user: User;
 }) {
   const body = (mtText as MtText).body as FormItem[];
 
@@ -330,8 +326,6 @@ function ItemList({
                     : []
                 }
                 messageAction={dispatch}
-                userAction={userAction}
-                user={user}
                 token={token}
                 tokenAction={tokenAction}
               />
@@ -348,17 +342,13 @@ const FormItemsList: React.FC<{
   dispatch: any;
   token: string;
   tokenAction: any;
-  userAction: any;
-  user: User;
-}> = ({ mtText, dispatch, token, tokenAction, userAction, user }) => {
+}> = ({ mtText, dispatch, token, tokenAction }) => {
   return (
     <ItemList
       dispatch={dispatch}
       mtText={mtText}
       token={token}
       tokenAction={tokenAction}
-      userAction={userAction}
-      user={user}
     />
   );
 };

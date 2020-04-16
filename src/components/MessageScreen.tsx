@@ -8,9 +8,7 @@ export const MessageScreen: React.FC<{
   messageAction: any;
   token: string;
   tokenAction: any;
-  user: User;
-  userAction: any;
-}> = ({ message, messageAction, token, tokenAction, user, userAction }) => {
+}> = ({ message, messageAction, token, tokenAction }) => {
   const MenuItemsList = React.lazy(() => import('./MenuItemsList'));
   const FormItemsList = React.lazy(() => import('./FormItemsList'));
   return (
@@ -21,8 +19,6 @@ export const MessageScreen: React.FC<{
           mtText={message.mtText as MtText}
           token={token}
           tokenAction={tokenAction}
-          userAction={userAction}
-          user={user}
         />
       ) : (
         <MenuItemsList
@@ -30,8 +26,6 @@ export const MessageScreen: React.FC<{
           dispatch={messageAction}
           token={token}
           tokenAction={tokenAction}
-          userAction={userAction}
-          user={user}
         />
       )}
     </Suspense>

@@ -141,9 +141,7 @@ const MenuItemsList: React.FC<{
   dispatch: any;
   token: string;
   tokenAction: any;
-  userAction: any;
-  user: User;
-}> = ({ mtText, dispatch, token, tokenAction, userAction, user }) => {
+}> = ({ mtText, dispatch, token, tokenAction }) => {
   return (
     <>
       <Header

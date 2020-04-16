@@ -25,9 +25,11 @@ import { CommonActions, useNavigation } from '@react-navigation/native';
 import { PreferencesContext } from './context/preferencesContext';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
+import { AuthContext } from './react-client-shared/reducers/tokenState';
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
+  const { tokenState, tokenAction } = React.useContext(AuthContext);
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
@@ -84,6 +86,46 @@ export function DrawerContent(props: Props) {
                 }
               >
                 Login / Sign Up
+              </Button>
+            </View>
+          </View>
+          <View style={styles.row}>
+            <View style={styles.section}>
+              <Button
+                style={styles.buttonFullWidth}
+                color="blue"
+                uppercase={false}
+                accessibilityLabel="Logout"
+                mode="contained"
+                onPress={() => {
+                  console.log("tokenAction:"+typeof tokenAction);
+                  console.log("token:"+tokenState.token);
+                  tokenAction({
+                    type: "LOGOUT"
+                  })
+                }}
+              >
+                Logout
+              </Button>
+            </View>
+          </View>
+          <View style={styles.row}>
+            <View style={styles.section}>
+              <Button
+                style={styles.buttonFullWidth}
+                color="blue"
+                uppercase={false}
+                accessibilityLabel="Home"
+                mode="outlined"
+                onPress={() =>
+                  props.navigation.dispatch(
+                    CommonActions.navigate({
+                      name: 'ChatWindow'
+                    })
+                  )
+                }
+              >
+                Home
               </Button>
             </View>
           </View>

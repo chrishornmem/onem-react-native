@@ -1,3 +1,5 @@
+import { logger } from './react-client-shared/utils/Log';
+
 import React from 'react';
 // import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,6 +16,23 @@ const Stack = createStackNavigator<StackNavigatorParamlist>();
 
 export const StackNavigator = () => {
   //const theme = useTheme();
+
+  // const authContext = React.useMemo(
+  //   () => ({
+  //     getToken: () => {
+  //       // In a production app, we need to send some data (usually username, password) to server and get a token
+  //       // We will also need to handle errors if sign in failed
+  //       // After getting token, we need to persist the token using `AsyncStorage`
+  //       // In the example, we'll use a dummy token
+
+  //       return tokenState?.token;
+  //     },
+  //     runTokenAction: (params: any) => {
+  //       return tokenAction(params)
+  //     }
+  //   }),
+  //   [tokenAction, tokenState]
+  // );
 
   return (
     <Stack.Navigator
@@ -47,7 +66,10 @@ export const StackNavigator = () => {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={{ headerTitle: 'Login' }}
+        options={({ route }) => {
+          const routeName = 'Login';
+          return { headerTitle: routeName };
+        }}
       />
     </Stack.Navigator>
   );
