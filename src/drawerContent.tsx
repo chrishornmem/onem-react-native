@@ -21,15 +21,17 @@ import {
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
 import { CommonActions, useNavigation } from '@react-navigation/native';
-
+import { AuthContext } from './react-client-shared/reducers/tokenState';
 import { PreferencesContext } from './context/preferencesContext';
+import { getUserProfile } from './react-client-shared/api/userProfile';
+import { User } from './react-client-shared/reducers/userState';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
-import { AuthContext } from './react-client-shared/reducers/tokenState';
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
   const { tokenState, tokenAction } = React.useContext(AuthContext);
+  const [userState, setUserState] = React.useState({} as User)
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
@@ -40,8 +42,16 @@ export function DrawerContent(props: Props) {
     outputRange: [-100, -85, -70, -45, 0],
   });
 
+  React.useEffect(() => {
+    if (tokenState.token) {
+      setUserState(getUserProfile(tokenState.token))
+    }
+  }, [tokenState.token]);
+
   return (
     <DrawerContentScrollView {...props}>
+      {console.log("userState:")}
+      {console.log(userState)}
       <Animated.View
         //@ts-ignore
         style={[
@@ -62,14 +72,14 @@ export function DrawerContent(props: Props) {
             <Avatar.Image
               source={{
                 uri:
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                  userState.picture || 'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
               }}
               size={50}
             />
           </TouchableOpacity>
-          <Title style={styles.title}>Dawid Urbaniak</Title>
-          <Caption style={styles.caption}>@trensik</Caption>
-          <View style={styles.row}>
+          <Title style={styles.title}>{userState.name}</Title>
+          <Caption style={styles.caption}>{userState.email}</Caption>
+          {!userState.is_authenticated && <View style={styles.row}>
             <View style={styles.section}>
               <Button
                 style={styles.buttonFullWidth}
@@ -88,8 +98,8 @@ export function DrawerContent(props: Props) {
                 Login / Sign Up
               </Button>
             </View>
-          </View>
-          <View style={styles.row}>
+          </View>}
+          {userState.is_authenticated && <View style={styles.row}>
             <View style={styles.section}>
               <Button
                 style={styles.buttonFullWidth}
@@ -102,13 +112,14 @@ export function DrawerContent(props: Props) {
                   console.log("token:"+tokenState.token);
                   tokenAction({
                     type: "LOGOUT"
-                  })
+                  });
+                  props.navigation.closeDrawer();
                 }}
               >
                 Logout
               </Button>
             </View>
-          </View>
+          </View>}
           <View style={styles.row}>
             <View style={styles.section}>
               <Button

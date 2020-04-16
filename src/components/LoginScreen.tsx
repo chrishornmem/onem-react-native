@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { Linking, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
-import { DrawerActions, useNavigation } from '@react-navigation/native';
-import { WebView } from 'react-native-webview';
+import { CommonActions, DrawerActions, useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
+import * as WebBrowser from 'expo-web-browser';
 import { makeKeyFromPrefix } from '../react-client-shared/utils';
+import { socket } from '../react-client-shared/utils/Socket';
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
 
-export const LoginScreen: React.FC<{}> = ({}) => {
-  const navigation = useNavigation();
+export const LoginScreen: React.FC<{ navigation: NavigationProp }> = ({
+  navigation,
+}) => {
   const jumpToHome = DrawerActions.jumpTo('Home');
-  const { tokenState, tokenAction }  = React.useContext(AuthContext);
+  const { tokenState, tokenAction } = React.useContext(AuthContext);
 
   const token = tokenState.token;
 
@@ -18,13 +18,27 @@ export const LoginScreen: React.FC<{}> = ({}) => {
 
   console.log('Login token:' + token);
 
-  React.useEffect(() => {
-    if (tokenState.token) {
-      Linking.openURL(url)
-    } else {
-      console.log('Token is null');
-    }
-  }, [tokenState, url]);
+  useFocusEffect(
+    React.useCallback(() => {
+      if (socket) {
+        socket.on('LOGIN', function () {
+          console.log("LOGGING IN dismissing");
+          WebBrowser.dismissBrowser();
+          navigation.dispatch(
+            CommonActions.navigate({
+              name: 'ChatWindow'
+            })
+          )
+        });
+        if (tokenState.token && !tokenState.loggingIn) {
+          WebBrowser.openBrowserAsync(url)
+        } else {
+          console.log('tokenState:');
+          console.log(tokenState);
+        }
+      }
+    }, [navigation, tokenState, url])
+  );
 
   return (
     <></>
