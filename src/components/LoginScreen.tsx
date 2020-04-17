@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { CommonActions, DrawerActions, useFocusEffect, useNavigation, NavigationProp } from '@react-navigation/native';
 import * as WebBrowser from 'expo-web-browser';
 import { makeKeyFromPrefix } from '../react-client-shared/utils';
@@ -21,9 +22,12 @@ export const LoginScreen: React.FC<{ navigation: NavigationProp }> = ({
   useFocusEffect(
     React.useCallback(() => {
       if (socket) {
+        console.log("registering socket")
         socket.on('LOGIN', function () {
           console.log("LOGGING IN dismissing");
-          WebBrowser.dismissBrowser();
+          if (Platform.OS === 'ios') {
+            WebBrowser.dismissBrowser();
+          }
           navigation.dispatch(
             CommonActions.navigate({
               name: 'ChatWindow'

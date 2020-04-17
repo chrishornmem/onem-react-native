@@ -2,6 +2,7 @@
   "expo": {
     "name": "ONEm",
     "slug": "ONEm",
+    "scheme": "onem",
     "privacy": "public",
     "platforms": [
       "ios",
