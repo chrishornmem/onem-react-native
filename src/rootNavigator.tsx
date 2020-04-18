@@ -293,7 +293,13 @@ export const RootNavigator = () => {
       <MessageContext.Provider value={messageContext}>
         <NavigationContainer theme={navigationTheme}>
           <Drawer.Navigator
-            drawerContent={props => <DrawerContent {...props} />}
+            drawerContent={props => (
+              <DrawerContent
+                tokenState={tokenState}
+                tokenAction={tokenAction}
+                {...props}
+              />
+            )}
           >
             <Drawer.Screen name="Home" component={StackNavigator} />
             <Drawer.Screen name="Login" component={LoginScreen} />

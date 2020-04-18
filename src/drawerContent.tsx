@@ -30,7 +30,8 @@ type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
-  const { tokenState, tokenAction } = React.useContext(AuthContext);
+  //const { tokenState, tokenAction } = React.useContext(AuthContext);
+  const { tokenState, tokenAction } = props;
   const [userState, setUserState] = React.useState({} as User)
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
@@ -50,8 +51,6 @@ export function DrawerContent(props: Props) {
 
   return (
     <DrawerContentScrollView {...props}>
-      {console.log("userState:")}
-      {console.log(userState)}
       <Animated.View
         //@ts-ignore
         style={[

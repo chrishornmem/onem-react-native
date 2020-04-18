@@ -26,7 +26,7 @@ export const ResponsiveImage: React.FC<{
         setWidthVal(0);
       }
     );
-  }, []);
+  }, [heightVal, uri, widthVal]);
 
   return (
     <>
