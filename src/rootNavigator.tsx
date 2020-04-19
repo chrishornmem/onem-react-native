@@ -6,7 +6,7 @@ import { DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { useTheme } from 'react-native-paper';
 
 import { StackNavigator } from './stack';
-import { DrawerContent } from './drawerContent';
+import { DrawerContent } from './components/drawerContent';
 import { LoginScreen } from './components/LoginScreen';
 
 import usePersistedReducer from './react-client-shared/hooks/usePersistedReducer';
@@ -33,8 +33,12 @@ import {
   initialTokenState,
 } from './react-client-shared/reducers/tokenState';
 
+import { User } from './react-client-shared/reducers/userState';
+
 import { socketReducer } from './react-client-shared/reducers/socket';
 import { Message } from './react-client-shared/utils/Message';
+import { STORAGE } from './react-client-shared/utils/Storage';
+import { getUserProfile } from './react-client-shared/api/userProfile';
 
 const Drawer = createDrawerNavigator();
 
@@ -49,13 +53,15 @@ export const RootNavigator = () => {
     'token',
     tokenReducer,
     initialTokenState,
-    true
+    STORAGE.ASYNC
   );
   const [messageState, messageAction] = usePersistedReducer(
     'chatWindow',
     messageReducer,
     initialMessageState
   );
+
+  const [userState, setUserState] = React.useState({} as User)
 
   React.useEffect(() => {
     const getToken = async () => {
@@ -281,7 +287,10 @@ export const RootNavigator = () => {
   }, [messageState, connectState, tokenState]);
 
   const authContext = React.useMemo(() => {
-    return { tokenState, tokenAction };
+    if (tokenState.token) {
+      setUserState(getUserProfile(tokenState.token))
+    }
+    return { tokenState, tokenAction, userState };
   }, [tokenState, tokenAction]);
 
   const messageContext = React.useMemo(() => {
@@ -293,13 +302,7 @@ export const RootNavigator = () => {
       <MessageContext.Provider value={messageContext}>
         <NavigationContainer theme={navigationTheme}>
           <Drawer.Navigator
-            drawerContent={props => (
-              <DrawerContent
-                tokenState={tokenState}
-                tokenAction={tokenAction}
-                {...props}
-              />
-            )}
+            drawerContent={props => <DrawerContent {...props} />}
           >
             <Drawer.Screen name="Home" component={StackNavigator} />
             <Drawer.Screen name="Login" component={LoginScreen} />

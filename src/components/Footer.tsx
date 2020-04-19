@@ -6,6 +6,8 @@ import { FloatingAction } from 'react-native-floating-action';
 
 import { Appbar, Avatar, FAB, Portal, useTheme } from 'react-native-paper';
 
+import { AuthContext } from '../react-client-shared/reducers/tokenState';
+
 export const Footer = (props: Props) => {
   const theme = useTheme();
   const [isOpen, setOpen] = React.useState(false);
@@ -14,6 +16,7 @@ export const Footer = (props: Props) => {
 
   const iconClosed = 'dots-vertical';
   const iconOpen = 'dots-horizontal';
+  const { userState } = React.useContext(AuthContext);
 
   return (
     <Appbar
@@ -29,7 +32,7 @@ export const Footer = (props: Props) => {
         <Avatar.Image
           size={40}
           source={{
-            uri:
+            uri: userState.picture ||
               'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
           }}
         />

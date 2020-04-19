@@ -20,19 +20,15 @@ import {
   useTheme,
 } from 'react-native-paper';
 import Animated from 'react-native-reanimated';
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import { AuthContext } from './react-client-shared/reducers/tokenState';
-import { PreferencesContext } from './context/preferencesContext';
-import { getUserProfile } from './react-client-shared/api/userProfile';
-import { User } from './react-client-shared/reducers/userState';
+import { CommonActions } from '@react-navigation/native';
+import { AuthContext } from '../react-client-shared/reducers/tokenState';
+import { PreferencesContext } from '../context/preferencesContext';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
-  //const { tokenState, tokenAction } = React.useContext(AuthContext);
-  const { tokenState, tokenAction } = props;
-  const [userState, setUserState] = React.useState({} as User)
+  const { userState } = React.useContext(AuthContext);
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
@@ -42,12 +38,6 @@ export function DrawerContent(props: Props) {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
     outputRange: [-100, -85, -70, -45, 0],
   });
-
-  React.useEffect(() => {
-    if (tokenState.token) {
-      setUserState(getUserProfile(tokenState.token))
-    }
-  }, [tokenState.token]);
 
   return (
     <DrawerContentScrollView {...props}>
@@ -71,54 +61,59 @@ export function DrawerContent(props: Props) {
             <Avatar.Image
               source={{
                 uri:
-                  userState.picture || 'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
+                  userState.picture ||
+                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
               }}
               size={50}
             />
           </TouchableOpacity>
           <Title style={styles.title}>{userState.name}</Title>
           <Caption style={styles.caption}>{userState.email}</Caption>
-          {!userState.is_authenticated && <View style={styles.row}>
-            <View style={styles.section}>
-              <Button
-                style={styles.buttonFullWidth}
-                color="blue"
-                uppercase={false}
-                accessibilityLabel="Login or Sign up"
-                mode="contained"
-                onPress={() =>
-                  props.navigation.dispatch(
-                    CommonActions.navigate({
-                      name: 'Login'
-                    })
-                  )
-                }
-              >
-                Login / Sign Up
-              </Button>
+          {!userState.is_authenticated && (
+            <View style={styles.row}>
+              <View style={styles.section}>
+                <Button
+                  style={styles.buttonFullWidth}
+                  color="blue"
+                  uppercase={false}
+                  accessibilityLabel="Login or Sign up"
+                  mode="contained"
+                  onPress={() =>
+                    props.navigation.dispatch(
+                      CommonActions.navigate({
+                        name: 'Login',
+                      })
+                    )
+                  }
+                >
+                  Login / Sign Up
+                </Button>
+              </View>
             </View>
-          </View>}
-          {userState.is_authenticated && <View style={styles.row}>
-            <View style={styles.section}>
-              <Button
-                style={styles.buttonFullWidth}
-                color="blue"
-                uppercase={false}
-                accessibilityLabel="Logout"
-                mode="contained"
-                onPress={() => {
-                  console.log("tokenAction:"+typeof tokenAction);
-                  console.log("token:"+tokenState.token);
-                  tokenAction({
-                    type: "LOGOUT"
-                  });
-                  props.navigation.closeDrawer();
-                }}
-              >
-                Logout
-              </Button>
+          )}
+          {userState.is_authenticated && (
+            <View style={styles.row}>
+              <View style={styles.section}>
+                <Button
+                  style={styles.buttonFullWidth}
+                  color="blue"
+                  uppercase={false}
+                  accessibilityLabel="Logout"
+                  mode="contained"
+                  onPress={() => {
+                    console.log('tokenAction:' + typeof tokenAction);
+                    console.log('token:' + tokenState.token);
+                    tokenAction({
+                      type: 'LOGOUT',
+                    });
+                    props.navigation.closeDrawer();
+                  }}
+                >
+                  Logout
+                </Button>
+              </View>
             </View>
-          </View>}
+          )}
           <View style={styles.row}>
             <View style={styles.section}>
               <Button
@@ -130,7 +125,7 @@ export function DrawerContent(props: Props) {
                 onPress={() =>
                   props.navigation.dispatch(
                     CommonActions.navigate({
-                      name: 'ChatWindow'
+                      name: 'ChatWindow',
                     })
                   )
                 }
