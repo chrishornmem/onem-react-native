@@ -46,11 +46,16 @@ export const Main = () => {
             theme === 'light'
               ? {
                 ...DefaultTheme,
-                colors: { ...DefaultTheme.colors },
-              }
+                  colors: {
+                    ...DefaultTheme.colors,
+                    primary: '#3f51b5',
+                    disabled: 'rgba(0,0,0,0.38)',
+                    text: 'rgba(0,0,0,0.87)',
+                  },
+                }
               : {
                 ...DarkTheme,
-                colors: { ...DarkTheme.colors },
+                  colors: { ...DarkTheme.colors, primary: '#3f51b5' },
               }
           }
         >

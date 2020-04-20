@@ -76,7 +76,7 @@ export function DrawerContent(props: Props) {
               <View style={styles.section}>
                 <Button
                   style={styles.buttonFullWidth}
-                  color="blue"
+               //   color="blue"
                   uppercase={false}
                   accessibilityLabel="Login or Sign up"
                   mode="contained"
@@ -98,7 +98,7 @@ export function DrawerContent(props: Props) {
               <View style={styles.section}>
                 <Button
                   style={styles.buttonFullWidth}
-                  color="blue"
+            //      color="blue"
                   uppercase={false}
                   accessibilityLabel="Logout"
                   mode="contained"

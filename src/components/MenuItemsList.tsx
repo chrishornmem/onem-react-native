@@ -10,12 +10,13 @@ import {
 import { Video } from 'expo-av';
 import { ScrollView } from 'react-native';
 
-import { Button, Caption, Card, Paragraph } from 'react-native-paper';
+import { Button, Caption, Card, Paragraph, useTheme } from 'react-native-paper';
 
 import { MtText, MenuItem } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
 import { isVideoUrl } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
+
 
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -28,6 +29,11 @@ const SwitchMenuItem: React.FC<{
   dispatch: any;
   index: number;
 }> = ({ item, token, tokenAction, dispatch, index }) => {
+
+  const theme = useTheme();
+  console.log("theme:");
+  console.log(theme);
+
   const clicked = (i: Number) => {
     dispatch({
       type: 'REQUESTING',
