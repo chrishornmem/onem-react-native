@@ -15,7 +15,7 @@ import {
   Paragraph,
   Switch,
   Text,
-  Title,
+  Subheading,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
@@ -23,6 +23,7 @@ import Animated from 'react-native-reanimated';
 import { CommonActions } from '@react-navigation/native';
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { PreferencesContext } from '../context/preferencesContext';
+import { CustomAvatar } from './CustomAvatar';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
@@ -58,17 +59,18 @@ export function DrawerContent(props: Props) {
               props.navigation.toggleDrawer();
             }}
           >
-            <Avatar.Image
-              source={{
-                uri:
-                  userState.picture ||
-                  'https://pbs.twimg.com/profile_images/952545910990495744/b59hSXUd_400x400.jpg',
-              }}
-              size={50}
+            <CustomAvatar
+              source={userState.picture}
+              name={userState.name}
+              size={64}
             />
           </TouchableOpacity>
-          <Title style={styles.title}>{userState.name}</Title>
-          <Caption style={styles.caption}>{userState.email}</Caption>
+          <Subheading style={styles.title}>
+            {userState.name || 'Sign up or login to link your mobile number'}
+          </Subheading>
+          {userState.email && (
+            <Caption style={styles.caption}>{userState.email}</Caption>
+          )}
           {!userState.is_authenticated && (
             <View style={styles.row}>
               <View style={styles.section}>
@@ -101,8 +103,6 @@ export function DrawerContent(props: Props) {
                   accessibilityLabel="Logout"
                   mode="contained"
                   onPress={() => {
-                    console.log('tokenAction:' + typeof tokenAction);
-                    console.log('token:' + tokenState.token);
                     tokenAction({
                       type: 'LOGOUT',
                     });
@@ -166,11 +166,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoSection: {
-    paddingLeft: 20,
+    paddingHorizontal: 20,
+    flex: 1,
+    alignItems: 'center',
   },
   title: {
     marginTop: 20,
-    fontWeight: 'bold',
+    textAlign: 'center',
+  //  fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,

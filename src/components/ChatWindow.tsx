@@ -15,9 +15,7 @@ export const ChatWindow: React.FC<{}> = ({}) => {
 
   const token = authContext?.tokenState?.token;
   const tokenAction = authContext?.tokenAction;
-
-  console.log("token:"+token);
-
+  
   return (
     <>
       <View style={styles.mainWrapper}>

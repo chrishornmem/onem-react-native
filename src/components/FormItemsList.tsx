@@ -282,7 +282,7 @@ function ItemList({
                 }
                 handleSubmit={props.handleSubmit}
               />
-              <Card style={styles.cardWrapper}>
+              <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
                 <Card.Content style={styles.container}>
                   <ScrollView>
                     {body.map((item: FormItem, i: any) => {

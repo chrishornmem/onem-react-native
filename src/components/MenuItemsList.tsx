@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+
 import {
   Dimensions,
   Image,
@@ -149,7 +150,7 @@ const MenuItemsList: React.FC<{
         leftHidden={mtText.__is_root}
         dispatch={dispatch}
       />
-      <Card style={styles.cardWrapper}>
+      <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
         <Card.Content style={styles.container}>
           <ScrollView>
             {mtText && mtText.body
@@ -170,7 +171,16 @@ const MenuItemsList: React.FC<{
           </ScrollView>
         </Card.Content>
       </Card>
-      <Footer />
+      <Footer
+        verbs={
+          typeof mtText === 'object' && mtText.__verbs
+            ? (mtText as MtText).__verbs
+            : []
+        }
+        messageAction={dispatch}
+        token={token}
+        tokenAction={tokenAction}
+      />
     </>
   );
 };
