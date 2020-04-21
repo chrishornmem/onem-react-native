@@ -1,5 +1,6 @@
 import { logger } from './react-client-shared/utils/Log';
 import React from 'react';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DefaultTheme, DarkTheme } from '@react-navigation/native';
@@ -10,6 +11,8 @@ import { DrawerContent } from './components/drawerContent';
 import { LoginScreen } from './components/LoginScreen';
 
 import usePersistedReducer from './react-client-shared/hooks/usePersistedReducer';
+import usePersistedAsyncReducer from './react-client-shared/hooks/usePersistedAsyncReducer';
+import { makeKeyFromPrefix } from './react-client-shared/utils';
 
 let initialized = false;
 
@@ -39,6 +42,7 @@ import { socketReducer } from './react-client-shared/reducers/socket';
 import { Message } from './react-client-shared/utils/Message';
 import { STORAGE } from './react-client-shared/utils/Storage';
 import { getUserProfile } from './react-client-shared/api/userProfile';
+import { AsyncStorage } from 'react-native';
 
 const Drawer = createDrawerNavigator();
 
@@ -49,11 +53,11 @@ export const RootNavigator = () => {
   const [connectState, connectAction] = React.useReducer(socketReducer, {
     connectStatus: 'start',
   });
-  const [tokenState, tokenAction] = usePersistedReducer(
+  const [tokenState, tokenAction] = usePersistedAsyncReducer(
     'token',
     tokenReducer,
     initialTokenState,
-    STORAGE.ASYNC
+   // STORAGE.ASYNC
   );
   const [messageState, messageAction] = usePersistedReducer(
     'chatWindow',
@@ -62,6 +66,7 @@ export const RootNavigator = () => {
   );
 
   const [userState, setUserState] = React.useState({} as User)
+  //const [userState, setUserState] = usePersistedAsyncState('user', {} as User)
 
   React.useEffect(() => {
     const getToken = async () => {
@@ -69,6 +74,31 @@ export const RootNavigator = () => {
       tokenAction({
         type: 'REFRESH_TOKEN',
       });
+      if (!tokenState.token) {
+        const key = makeKeyFromPrefix('token');
+        const tokenStateRaw = await AsyncStorage.getItem(key);
+        console.log("tokenRaw:"+tokenStateRaw);
+        if (tokenStateRaw) {
+          const tokenState = JSON.parse(tokenStateRaw);
+          console.log("token:"+tokenState.token);
+          if (tokenState.token) {
+            tokenAction({
+              type: 'STORE_TOKEN',
+              payload: { token: tokenState.token },
+            });
+            disconnect();
+            logger.info('got token:');
+            logger.info(tokenState.token);
+            const s: any = createSocket(tokenState.token);
+            registerEvents(s);
+            connectAction({
+              type: 'CONNECTING',
+              payload: null,
+            });
+            return;
+          }
+        }
+      }
       try {
         const data = await authenticate(null);
         tokenAction({

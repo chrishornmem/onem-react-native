@@ -31,8 +31,6 @@ const SwitchMenuItem: React.FC<{
 }> = ({ item, token, tokenAction, dispatch, index }) => {
 
   const theme = useTheme();
-  console.log("theme:");
-  console.log(theme);
 
   const clicked = (i: Number) => {
     dispatch({

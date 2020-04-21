@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Platform, Keyboard, StyleSheet, TouchableOpacity } from 'react-native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { FloatingAction } from './react-native-floating-action';
@@ -13,6 +13,7 @@ import { emitToServer } from '../react-client-shared/utils/Socket';
 export const Footer = (props: Props) => {
   const theme = useTheme();
   const [isOpen, setOpen] = React.useState(false);
+  const [keyboardIsOpen, setKeyboardIsOpen] = React.useState(false);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
@@ -24,7 +25,7 @@ export const Footer = (props: Props) => {
 
   const slicedVerbs = verbs.slice(0, maxVerbs);
 
-  const makeVerbs = () => { 
+  const makeVerbs = () => {
     let result = [];
     for (let i = 0; i < slicedVerbs.length; i++) {
       let verb = {
@@ -33,7 +34,7 @@ export const Footer = (props: Props) => {
         onPress: (name: string) => {
           messageAction({
             type: 'REQUESTING',
-        })
+          });
           emitToServer({ action_type: 'footerVerbSelected', name: name });
         },
         icon: require('../../assets/onem-logo.png'),
@@ -43,52 +44,74 @@ export const Footer = (props: Props) => {
     return result;
   };
 
+  const setKeyboardOpen = () => {
+    setKeyboardIsOpen(true);
+  };
+
+  const setKeyboardClosed = () => {
+    setKeyboardIsOpen(false);
+  };
+
+  React.useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', setKeyboardOpen);
+    Keyboard.addListener('keyboardDidHide', setKeyboardClosed);
+
+    return function cleanUp() {
+      Keyboard.removeListener('keyboardDidShow', setKeyboardOpen);
+      Keyboard.removeListener('keyboardDidShow', setKeyboardClosed);
+    };
+  }, []);
+
   return (
-    <Appbar
-      style={styles.bottom}
-      theme={{ colors: { primary: theme.colors.surface } }}
-    >
-      <TouchableOpacity
-        style={{ marginLeft: 10 }}
-        onPress={() => {
-          ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
-        }}
-      >
-        <CustomAvatar
-          size={40}
-          source={userState.picture}
-          name={userState.name}
-        />
-      </TouchableOpacity>
-      {verbs.length ? (
-        <View style={{ paddingTop: 80 }}>
-          <FloatingAction
-            //   open={isOpen}
-            buttonSize={40}
-            color="transparent"
-            iconColor={theme.colors.text}
-            distanceToEdge={20}
-            actions={makeVerbs()}
-            onPressItem={action => {
-              action.onPress(action.name);
+    <>
+      {(Platform.OS == 'ios' || !keyboardIsOpen) && (
+        <Appbar
+          style={styles.bottom}
+          theme={{ colors: { primary: theme.colors.surface } }}
+        >
+          <TouchableOpacity
+            style={{ marginLeft: 10 }}
+            onPress={() => {
+              ((navigation as any) as DrawerNavigationProp<{}>).openDrawer();
             }}
-            //    accessibilityLabel="verbs"
-            //    onStateChange={({ open }) => setOpen(open)}
-            visible={isFocused}
-            //icon={isOpen ? iconOpen : iconClosed}
-            //color={theme.colors.text}
-            // theme={{
-            //   colors: {
-            //     background: theme.colors.surface,
-            //   },
-            // }}
-            //style={{ paddingBottom: 12 }}
-            //fabStyle={styles.fab}
-            //onPress={() => {}}
-          />
-        </View>
-      ) : null}
-    </Appbar>
+          >
+            <CustomAvatar
+              size={40}
+              source={userState.picture}
+              name={userState.name}
+            />
+          </TouchableOpacity>
+          {verbs.length ? (
+            <Portal>
+              <FloatingAction
+                //   open={isOpen}
+                buttonSize={40}
+                color="transparent"
+                iconColor={theme.colors.disabled}
+                distanceToEdge={20}
+                actions={makeVerbs()}
+                onPressItem={action => {
+                  action.onPress(action.name);
+                }}
+                //    accessibilityLabel="verbs"
+                //    onStateChange={({ open }) => setOpen(open)}
+                visible={isFocused}
+                //icon={isOpen ? iconOpen : iconClosed}
+                //color={theme.colors.text}
+                // theme={{
+                //   colors: {
+                //     background: theme.colors.surface,
+                //   },
+                // }}
+                //style={{ paddingBottom: 12 }}
+                //fabStyle={styles.fab}
+                //onPress={() => {}}
+              />
+            </Portal>
+          ) : null}
+        </Appbar>
+      )}
+    </>
   );
 };
 

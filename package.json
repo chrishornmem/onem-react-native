@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/vector-icons": "^10.0.0",
     "@overgear/yup-ast": "^1.0.3",
+    "@react-native-community/async-storage": "^1.9.0",
     "@react-native-community/masked-view": "0.1.6",
     "@react-navigation/drawer": "^5.3.4",
     "@react-navigation/material-bottom-tabs": "^5.1.6",
@@ -27,7 +28,6 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.0.tar.gz",
     "react-native-appearance": "~0.3.3",
     "react-native-elements": "^1.2.7",
-    "react-native-floating-action": "^1.20.0",
     "react-native-gesture-handler": "~1.6.0",
     "react-native-paper": "^3.6.0",
     "react-native-reanimated": "~1.7.0",

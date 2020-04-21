@@ -116,9 +116,10 @@ class FloatingAction extends Component {
 
   get distanceToVerticalEdge() {
     const { distanceToEdge } = this.props;
-    return typeof distanceToEdge === 'number'
-      ? distanceToEdge
-      : distanceToEdge.vertical;
+    return 10;
+    // return typeof distanceToEdge === 'number'
+    //   ? distanceToEdge
+    //   : distanceToEdge.vertical;
   }
 
   onKeyboardShow = e => {
@@ -237,6 +238,8 @@ class FloatingAction extends Component {
       onOpen
     } = this.props;
     const { active } = this.state;
+
+    console.log("pressed");
 
     if (dismissKeyboardOnPress) {
       Keyboard.dismiss();
@@ -368,7 +371,7 @@ class FloatingAction extends Component {
           {
             rotate: this.animation.interpolate({
               inputRange: [0, 1],
-              outputRange: ["0deg", "45deg"]
+              outputRange: ["0deg", "90deg"]
             })
           }
         ]
@@ -383,7 +386,7 @@ class FloatingAction extends Component {
       animatedViewStyle = {
         transform: [
           {
-            rotate: "45deg"
+            rotate: "90deg"
           }
         ]
       };
@@ -661,8 +664,8 @@ const styles = StyleSheet.create({
     zIndex: 2,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 5,
-    position: "absolute"
+    elevation: 0,
+    position: "absolute",
   },
   button: {
     zIndex: 3,
