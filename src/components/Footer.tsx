@@ -4,7 +4,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { FloatingAction } from './react-native-floating-action';
 
-import { Appbar, Avatar, FAB, Portal, useTheme } from 'react-native-paper';
+import { Appbar, Portal, useTheme } from 'react-native-paper';
 
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { CustomAvatar } from './CustomAvatar';
@@ -20,6 +20,8 @@ export const Footer = (props: Props) => {
   const iconClosed = 'dots-vertical';
   const iconOpen = 'dots-horizontal';
   const { userState } = React.useContext(AuthContext);
+// Here's how we'll keep track of our component's mounted state
+  const componentIsMounted = React.useRef(true);
 
   const { messageAction, verbs = [], maxVerbs = 6 } = props;
 
@@ -46,11 +48,15 @@ export const Footer = (props: Props) => {
   };
 
   const setKeyboardOpen = () => {
-    setKeyboardIsOpen(true);
+    if (componentIsMounted.current) {
+      setKeyboardIsOpen(true);
+    }
   };
 
   const setKeyboardClosed = () => {
-    setKeyboardIsOpen(false);
+    if (componentIsMounted.current) {
+      setKeyboardIsOpen(false);
+    }
   };
 
   React.useEffect(() => {
@@ -58,6 +64,7 @@ export const Footer = (props: Props) => {
     Keyboard.addListener('keyboardDidHide', setKeyboardClosed);
 
     return function cleanUp() {
+      componentIsMounted.current = false;
       Keyboard.removeListener('keyboardDidShow', setKeyboardOpen);
       Keyboard.removeListener('keyboardDidShow', setKeyboardClosed);
     };
