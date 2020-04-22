@@ -1,18 +1,13 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import {
   DrawerContentComponentProps,
-  DrawerContentOptions,
   DrawerContentScrollView,
-  DrawerItem,
 } from '@react-navigation/drawer';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
-  Avatar,
   Button,
   Caption,
   Drawer,
-  Paragraph,
   Switch,
   Text,
   Subheading,
@@ -22,6 +17,7 @@ import {
 import Animated from 'react-native-reanimated';
 import { CommonActions } from '@react-navigation/native';
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
+import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { PreferencesContext } from '../context/preferencesContext';
 import { CustomAvatar } from './CustomAvatar';
 
@@ -29,7 +25,8 @@ type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
-  const { userState } = React.useContext(AuthContext);
+  const { userState, tokenAction } = React.useContext(AuthContext);
+  const { messageAction } = React.useContext(MessageContext);
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
@@ -105,6 +102,9 @@ export function DrawerContent(props: Props) {
                   onPress={() => {
                     tokenAction({
                       type: 'LOGOUT',
+                    });
+                    messageAction({
+                      type: 'LOGOUT'
                     });
                     props.navigation.closeDrawer();
                   }}

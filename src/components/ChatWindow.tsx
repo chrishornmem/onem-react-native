@@ -10,11 +10,10 @@ import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 
 export const ChatWindow: React.FC<{}> = ({}) => {
-  const authContext  = React.useContext(AuthContext);
+  const { tokenState, tokenAction }  = React.useContext(AuthContext);
   const { messageState, messageAction } = React.useContext(MessageContext);
 
-  const token = authContext?.tokenState?.token;
-  const tokenAction = authContext?.tokenAction;
+  const token = tokenState?.token;
   
   return (
     <>
@@ -29,6 +28,8 @@ export const ChatWindow: React.FC<{}> = ({}) => {
         ) : (
           <View style={styles.container}>
             {!messageState.requesting &&
+            !tokenState.loggingIn &&
+            !tokenState.loggingOut &&
             messageState.message &&
             messageState.message.mtText ? (
               <MessageScreen
