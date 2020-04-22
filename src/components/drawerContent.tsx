@@ -104,7 +104,8 @@ export function DrawerContent(props: Props) {
                       type: 'LOGOUT',
                     });
                     messageAction({
-                      type: 'LOGOUT'
+                      type: 'LOGOUT',
+                      payload: null,
                     });
                     props.navigation.closeDrawer();
                   }}

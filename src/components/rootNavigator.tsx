@@ -36,14 +36,15 @@ import { User } from '../react-client-shared/reducers/userState';
 
 import { socketReducer } from '../react-client-shared/reducers/socket';
 import { Message } from '../react-client-shared/utils/Message';
-import { STORAGE } from '../react-client-shared/utils/Storage';
+import { Storage, STORAGE } from '../react-client-shared/utils/Storage';
 import { getUserProfile } from '../react-client-shared/api/userProfile';
-import { AsyncStorage } from 'react-native';
 
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator = () => {
   const theme = useTheme();
+  const storage = new Storage(STORAGE.ASYNC);
+
   const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
 
   const [connectState, connectAction] = React.useReducer(socketReducer, {
@@ -55,8 +56,8 @@ export const RootNavigator = () => {
     initialTokenState
     // STORAGE.ASYNC
   );
-  const [messageState, messageAction] = usePersistedReducer(
-    'chatWindow',
+  const [messageState, messageAction] = React.useReducer(
+  //  'chatWindow',
     messageReducer,
     initialMessageState
   );
@@ -74,10 +75,12 @@ export const RootNavigator = () => {
       if (tokenState.loggingIn) {
         messageAction({
           type: 'SERVICE_SWITCH',
+          payload: null,
         });
       } else {
         messageAction({
           type: 'REFRESH',
+          payload: null,
         });
       }
       tokenAction({
@@ -95,17 +98,6 @@ export const RootNavigator = () => {
       .on('reconnect', function(reason: any) {
         logger.error('reconnect:');
         logger.error(reason);
-
-        // connectAction({
-        //   type: 'CONNECTING',
-        //   payload: null,
-        // });
-        // messageAction({
-        //   type: 'RECONNECT',
-        // });
-        // if (tokenState.token) {
-        //   reconnect(tokenState.token);
-        // }
       })
       .on('disconnect', function(reason: string) {
         logger.error('disconnected:');
@@ -122,6 +114,7 @@ export const RootNavigator = () => {
             });
             messageAction({
               type: 'FORCED_LOGOUT',
+              payload: null,
             });
             // const s: any = createSocket(tokenState.token);
             // registerEvents(s);
@@ -149,13 +142,7 @@ export const RootNavigator = () => {
           type: 'STORE_TOKEN',
           payload: data,
         });
-        disconnect();
-        const s: any = createSocket(data.token);
-        registerEvents(s);
-        connectAction({
-          type: 'CONNECTING',
-          payload: null,
-        });
+        recreateSocket(data.token);
       })
       .on('LOGIN', function(data: any) {
         logger.info('LOGIN:');
@@ -183,6 +170,10 @@ export const RootNavigator = () => {
     logger.info(token);
     const s: any = createSocket(token);
     registerEvents(s);
+    connectAction({
+      type: 'CONNECTING',
+      payload: null,
+    });
   }
 
   React.useEffect(() => {
@@ -192,22 +183,17 @@ export const RootNavigator = () => {
         type: 'REFRESH_TOKEN',
       });
       if (!tokenState.token) {
-        const key = makeKeyFromPrefix('token');
-        const tokenStateRaw = await AsyncStorage.getItem(key);
+        const tokenStateRaw = await storage.get('token');
         console.log('tokenRaw:' + tokenStateRaw);
         if (tokenStateRaw) {
-          const tokenState = JSON.parse(tokenStateRaw);
-          console.log('token:' + tokenState.token);
-          if (tokenState.token) {
+          const parsedToken = JSON.parse(tokenStateRaw);
+          console.log('token:' + parsedToken.token);
+          if (parsedToken.token) {
             tokenAction({
               type: 'STORE_TOKEN',
-              payload: { token: tokenState.token },
+              payload: { token: parsedToken.token },
             });
-            recreateSocket(tokenState.token);
-            connectAction({
-              type: 'CONNECTING',
-              payload: null,
-            });
+            recreateSocket(parsedToken.token);
             return;
           }
         }
@@ -219,17 +205,9 @@ export const RootNavigator = () => {
           payload: data,
         });
         recreateSocket(data.token);
-        connectAction({
-          type: 'CONNECTING',
-          payload: null,
-        });
       } catch (error) {
         logger.error(error);
       }
-      connectAction({
-        type: 'CONNECTING',
-        payload: null,
-      });
     };
 
     const refreshToken = async (t: string) => {
@@ -244,10 +222,6 @@ export const RootNavigator = () => {
           payload: data,
         });
         recreateSocket(data.token);
-        connectAction({
-          type: 'CONNECTING',
-          payload: null,
-        });
       } catch (error) {
         logger.error(error);
       }
@@ -271,23 +245,16 @@ export const RootNavigator = () => {
       } else if (connectState.connectStatus === 'start' && tokenState.token) {
         logger.info('status is connecting:' + tokenState.token);
         recreateSocket(tokenState.token);
-        connectAction({
-          type: 'CONNECTING',
-          payload: null,
-        });
       } else if (tokenState.loggingIn && tokenState.token) {
         //  popUpWindow.close();
         recreateSocket(tokenState.token);
-        connectAction({
-          type: 'CONNECTING',
-          payload: null,
-        });
         tokenAction({
           type: 'REFRESH_TOKEN',
           payload: tokenState.token,
         });
         messageAction({
           type: 'REQUESTING',
+          payload: null,
         });
       } else if (!tokenState.token && !tokenState.refreshingToken) {
         getToken();

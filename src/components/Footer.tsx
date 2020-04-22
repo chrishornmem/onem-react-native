@@ -34,6 +34,7 @@ export const Footer = (props: Props) => {
         onPress: (name: string) => {
           messageAction({
             type: 'REQUESTING',
+            payload: null,
           });
           emitToServer({ action_type: 'footerVerbSelected', name: name });
         },
