@@ -1,5 +1,6 @@
 import React, { Component } from "react"; // eslint-disable-line
 import PropTypes from "prop-types";
+
 import {
   StyleSheet,
   Image,
@@ -116,7 +117,9 @@ class FloatingAction extends Component {
 
   get distanceToVerticalEdge() {
     const { distanceToEdge } = this.props;
-    return 10;
+
+    return isIphoneX() ? 40 : 10;
+
     // return typeof distanceToEdge === 'number'
     //   ? distanceToEdge
     //   : distanceToEdge.vertical;
