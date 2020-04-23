@@ -8,9 +8,10 @@ import {
   Button,
   Caption,
   Drawer,
+  List,
+  Subheading,
   Switch,
   Text,
-  Subheading,
   TouchableRipple,
   useTheme,
 } from 'react-native-paper';
@@ -20,6 +21,9 @@ import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { PreferencesContext } from '../context/preferencesContext';
 import { CustomAvatar } from './CustomAvatar';
+import { AppIcon } from './AppIcon';
+import { AppsContext, App } from '../context/appsContext';
+import { emitToServer } from '../react-client-shared/utils/Socket';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
@@ -27,10 +31,26 @@ export function DrawerContent(props: Props) {
   const paperTheme = useTheme();
   const { userState, tokenAction } = React.useContext(AuthContext);
   const { messageAction } = React.useContext(MessageContext);
+  const { apps, getCurrentApp } = React.useContext(AppsContext);
+
+  console.log('apps:');
+  console.log(apps);
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
   );
+
+  const switchService = (appId: string) => {
+    props.navigation.closeDrawer();
+    emitToServer({
+      action_type: 'serviceSwitch',
+      app_id: appId,
+    });
+    messageAction({
+      type: 'SERVICE_SWITCH',
+      payload: null,
+    });
+  };
 
   const translateX = Animated.interpolate(props.progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
@@ -73,7 +93,7 @@ export function DrawerContent(props: Props) {
               <View style={styles.section}>
                 <Button
                   style={styles.buttonFullWidth}
-               //   color="blue"
+                  //   color="blue"
                   uppercase={false}
                   accessibilityLabel="Login or Sign up"
                   mode="contained"
@@ -95,7 +115,7 @@ export function DrawerContent(props: Props) {
               <View style={styles.section}>
                 <Button
                   style={styles.buttonFullWidth}
-            //      color="blue"
+                  //      color="blue"
                   uppercase={false}
                   accessibilityLabel="Logout"
                   mode="contained"
@@ -115,26 +135,6 @@ export function DrawerContent(props: Props) {
               </View>
             </View>
           )}
-          <View style={styles.row}>
-            <View style={styles.section}>
-              <Button
-                style={styles.buttonFullWidth}
-                color="blue"
-                uppercase={false}
-                accessibilityLabel="Home"
-                mode="outlined"
-                onPress={() =>
-                  props.navigation.dispatch(
-                    CommonActions.navigate({
-                      name: 'ChatWindow',
-                    })
-                  )
-                }
-              >
-                Home
-              </Button>
-            </View>
-          </View>
         </View>
         <Drawer.Section title="Preferences">
           <TouchableRipple onPress={toggleTheme}>
@@ -153,6 +153,58 @@ export function DrawerContent(props: Props) {
               </View>
             </View>
           </TouchableRipple>
+        </Drawer.Section>
+        <Drawer.Section title="Apps">
+          <List.Section style={{ paddingLeft: 0 }}>
+            {console.log('apps.length:' + apps.length)}
+            {apps.map((app: App, i: any) => {
+              return (
+                <TouchableRipple key={i} onPress={() => switchService(app.id)}>
+                  <List.Item
+                    style={
+                      getCurrentApp().id === app.id
+                        ? { backgroundColor: paperTheme.colors.background }
+                        : undefined
+                    }
+                    title={app.name || 'name'}
+                    description={app.about || 'About the app'}
+                    descriptionNumberOfLines={1}
+                    left={props => (
+                      <AppIcon
+                        {...props}
+                        iconBg={app.webIconBg}
+                        iconColor={app.webIconColor}
+                        name={app.webAddIcon}
+                        style={{ marginLeft: 8 }}
+                      />
+                    )}
+                  />
+                </TouchableRipple>
+              );
+            })}
+          </List.Section>
+          <View style={styles.userInfoSection}>
+            <View style={styles.row}>
+              <View style={styles.section}>
+                <Button
+                  style={styles.buttonFullWidth}
+                  color="blue"
+                  uppercase={false}
+                  accessibilityLabel="Home"
+                  mode="outlined"
+                  onPress={() => {
+                    props.navigation.dispatch(
+                      CommonActions.navigate({
+                        name: 'AddApp',
+                      })
+                    );
+                  }}
+                >
+                  Add app
+                </Button>
+              </View>
+            </View>
+          </View>
         </Drawer.Section>
       </Animated.View>
     </DrawerContentScrollView>
@@ -174,7 +226,7 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 20,
     textAlign: 'center',
-  //  fontWeight: 'bold',
+    //  fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,

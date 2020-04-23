@@ -9,6 +9,7 @@ import { useTheme } from 'react-native-paper';
 import { StackNavigator } from '../stack';
 import { DrawerContent } from './drawerContent';
 import { LoginScreen } from './LoginScreen';
+import { AddAppScreen } from './AddAppScreen';
 
 import usePersistedReducer from '../react-client-shared/hooks/usePersistedReducer';
 import usePersistedAsyncReducer from '../react-client-shared/hooks/usePersistedAsyncReducer';
@@ -32,21 +33,22 @@ import {
   initialTokenState,
 } from '../react-client-shared/reducers/tokenState';
 
+import { AppsContext } from '../context/appsContext';
+
 import { User } from '../react-client-shared/reducers/userState';
 
 import { socketReducer } from '../react-client-shared/reducers/socket';
 import { Message } from '../react-client-shared/utils/Message';
 import { Storage, STORAGE } from '../react-client-shared/utils/Storage';
 import { getUserProfile } from '../react-client-shared/api/userProfile';
+import { emitToServer } from '../react-client-shared/utils/Socket';
 
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator = () => {
   const theme = useTheme();
   const storage = new Storage(STORAGE.ASYNC);
-
   const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-
   const [connectState, connectAction] = React.useReducer(socketReducer, {
     connectStatus: 'start',
   });
@@ -61,9 +63,9 @@ export const RootNavigator = () => {
     messageReducer,
     initialMessageState
   );
-
   const [userState, setUserState] = React.useState({} as User);
   //const [userState, setUserState] = usePersistedAsyncState('user', {} as User)
+  const { getCurrentApp } = React.useContext(AppsContext);
 
   function registerEvents(s: any) {
     s.on('connect', function() {
@@ -73,11 +75,19 @@ export const RootNavigator = () => {
         payload: null,
       });
       if (tokenState.loggingIn) {
+        emitToServer({
+          action_type: 'serviceSwitch',
+          app_id: getCurrentApp().id,
+        });
         messageAction({
           type: 'SERVICE_SWITCH',
           payload: null,
         });
       } else {
+        emitToServer({
+          action_type: 'refreshContext',
+          app_id: getCurrentApp().id,
+        });
         messageAction({
           type: 'REFRESH',
           payload: null,
@@ -289,6 +299,7 @@ export const RootNavigator = () => {
           >
             <Drawer.Screen name="Home" component={StackNavigator} />
             <Drawer.Screen name="Login" component={LoginScreen} />
+            <Drawer.Screen name="AddApp" component={AddAppScreen} />
           </Drawer.Navigator>
         </NavigationContainer>
       </MessageContext.Provider>

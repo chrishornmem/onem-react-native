@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { AsyncStorage, StyleSheet, View } from 'react-native';
 import {
   Button,
   Modal,
@@ -8,28 +8,50 @@ import {
   Surface,
   Text,
   TextInput,
+  HelperText,
 } from 'react-native-paper';
 import { AppsContext } from '../context/appsContext';
+import { registerApp } from '../react-client-shared/api/register';
+import { isEmptyObj } from '../react-client-shared/utils';
 
 export const AddAppScreen: React.FC<{}> = ({}) => {
   const [isModalOpen, setModalOpen] = React.useState(false);
   const [appId, setAppId] = React.useState(null);
+  const [errorText, setErrorText] = React.useState(null);
 
-  const { apps, insertApp } = React.useContext(AppsContext);
+  const { apps, insertApp, clearAppStore } = React.useContext(AppsContext);
 
   const closeModal = () => setModalOpen(false);
   const showModal = () => setModalOpen(true);
 
   const saveApp = (appId: string) => {
-    const app = { name: 'name', id: appId };
-    console.log('saveApp');
-    console.log(app)
-    insertApp(app);
-    console.log('savedApp');
-    console.log('length:' + apps.length);
-    console.log(AppsContext)
+    setErrorText(null);
+    registerApp(appId)
+      .then(result => {
+        if (isEmptyObj(result?.data)) {
+          throw 'Invalid app id';
+        }
+        const app = { name: 'name', id: appId, ...result.data };
 
-};
+        console.log('saveApp');
+        console.log(app);
+        console.log('result:');
+        console.log(result);
+        insertApp(app);
+        console.log('savedApp');
+        console.log('length:' + apps.length);
+        console.log(AppsContext);
+        setAppId(null);
+      })
+      .catch(e => {
+        console.log(e);
+        setErrorText(e);
+      });
+  };
+
+  const clear = () => {
+    clearAppStore()
+  }
 
   return (
     <Provider>
@@ -49,6 +71,9 @@ export const AddAppScreen: React.FC<{}> = ({}) => {
                     setAppId(id);
                   }}
                 />
+                <HelperText type="error" visible={errorText}>
+                  {errorText}
+                </HelperText>
                 <Button
                   style={{ alignSelf: 'flex-end', marginTop: 20 }}
                   onPress={() => saveApp(appId)}
@@ -58,7 +83,9 @@ export const AddAppScreen: React.FC<{}> = ({}) => {
               </View>
             </Surface>
           </Modal>
+          {!isModalOpen && <Text>Apps count:{apps.length}</Text>}
           {!isModalOpen && <Button onPress={showModal}>Add an app</Button>}
+          {!isModalOpen && <Button onPress={clear}>Clear store</Button>}
         </View>
       </Portal>
     </Provider>

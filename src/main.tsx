@@ -12,7 +12,7 @@ import { RootNavigator } from './components/rootNavigator';
 import { AddAppScreen } from './components/AddAppScreen';
 
 import { PreferencesContext } from './context/preferencesContext';
-import { AppsContext, AppsContextType, App } from './context/appsContext';
+import { AppsContext, App } from './context/appsContext';
 
 import { Storage, STORAGE } from './react-client-shared/utils/Storage';
 import useAsyncStorage from './react-client-shared/hooks/useAsyncStorage';
@@ -23,16 +23,41 @@ export const Main = () => {
     colorScheme === 'dark' ? 'dark' : 'light'
   );
 
-  const storage = new Storage(STORAGE.ASYNC);
-
   const [appData, setApps, hydrated] = useAsyncStorage('apps', {
     apps: [],
   });
 
   const insertApp = (app: App) => {
     let a = appData.apps;
+    app.current = a.length === 0;
     a.push(app);
     setApps({ apps: a });
+  };
+
+  const getCurrentApp = () => {
+    for (let a of appData.apps) {
+      if (a.current) {
+        return a;
+      }
+    }
+    return undefined;
+  };
+
+  const setCurrentApp = (appId: string) => {
+    let appsTemp = appData.apps;
+    for (let a of appsTemp) {
+      if (a.id === appId) {
+        a.current = true;
+      } else {
+        a.current = false;
+      }
+    }
+    setApps({ apps: appsTemp });
+    return true;
+  };
+
+  const clearAppStore = () => {
+    setApps({ apps: [] });
   };
 
   const [rtl] = React.useState<boolean>(I18nManager.isRTL);
@@ -82,6 +107,9 @@ export const Main = () => {
     () => ({
       apps: appData.apps,
       insertApp: insertApp,
+      clearAppStore: clearAppStore,
+      getCurrentApp: getCurrentApp,
+      setCurrentApp: setCurrentApp,
     }),
     [appData.apps]
   );

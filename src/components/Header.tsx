@@ -4,7 +4,7 @@ import { useSafeArea } from 'react-native-safe-area-context';
 import { Appbar, Button, useTheme } from 'react-native-paper';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { ONEM_ACTION } from '../react-client-shared/types/actions';
-import { getAppId } from '../react-client-shared/utils';
+import { AppsContext } from '../context/appsContext';
 
 export const Header = (props: {
   dispatch: any;
@@ -19,6 +19,7 @@ export const Header = (props: {
   handleLeftClick?: any;
 }) => {
   const theme = useTheme();
+  const { getCurrentApp } = React.useContext(AppsContext);
 
   const {
     title,
@@ -47,7 +48,7 @@ export const Header = (props: {
 
   const homeEmitProps = {
     action_type: ONEM_ACTION.SERVICE_SWITCH,
-    app_id: getAppId(),
+    app_id: getCurrentApp().id,
   };
 
   const handleHome = () => {

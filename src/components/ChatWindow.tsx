@@ -19,7 +19,7 @@ export const ChatWindow: React.FC<{}> = ({}) => {
     <>
       <View style={styles.mainWrapper}>
         {messageState.requesting && (
-          <View style={[styles.container, styles.horizontal]}>
+          <View style={[styles.horizontal]}>
             <ActivityIndicator size="large" />
           </View>
         )}
@@ -50,12 +50,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    //  justifyContent: 'center',
+    // justifyContent: 'center',
   },
   horizontal: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 10,
+    //flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
   },
   mainWrapper: {
     flex: 1,
