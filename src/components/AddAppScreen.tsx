@@ -1,111 +1,68 @@
 import React from 'react';
-import { AsyncStorage, StyleSheet, View } from 'react-native';
-import {
-  Button,
-  Modal,
-  Portal,
-  Provider,
-  Surface,
-  Text,
-  TextInput,
-  HelperText,
-} from 'react-native-paper';
+import { CommonActions, NavigationProp } from '@react-navigation/native';
+
 import { AppsContext } from '../context/appsContext';
-import { registerApp } from '../react-client-shared/api/register';
+import { registerAppByName } from '../react-client-shared/api/register';
 import { isEmptyObj } from '../react-client-shared/utils';
+import { MessageContext } from '../react-client-shared/reducers/messageState';
+import { emitToServer } from '../react-client-shared/utils/Socket';
+import { AddApp } from './AddApp';
 
-export const AddAppScreen: React.FC<{}> = ({}) => {
-  const [isModalOpen, setModalOpen] = React.useState(false);
-  const [appId, setAppId] = React.useState(null);
-  const [errorText, setErrorText] = React.useState(null);
+export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
+  navigation,
+}) => {
+  const [error, setError] = React.useState(null);
+  const { messageAction } = React.useContext(MessageContext);
 
-  const { apps, insertApp, clearAppStore } = React.useContext(AppsContext);
+  const { apps, insertApp, clearAppStore, setCurrentApp } = React.useContext(
+    AppsContext
+  );
 
-  const closeModal = () => setModalOpen(false);
-  const showModal = () => setModalOpen(true);
-
-  const saveApp = (appId: string) => {
-    setErrorText(null);
-    registerApp(appId)
+  const saveApp = (appName: string) => {
+    setError(null);
+    registerAppByName(appName)
       .then(result => {
         if (isEmptyObj(result?.data)) {
-          throw 'Invalid app id';
+          throw 'Invalid app name';
         }
-        const app = { name: 'name', id: appId, ...result.data };
-
-        console.log('saveApp');
-        console.log(app);
-        console.log('result:');
-        console.log(result);
+        const app = { ...result.data };
+        const prevAppsLength = apps.length;
         insertApp(app);
-        console.log('savedApp');
-        console.log('length:' + apps.length);
-        console.log(AppsContext);
-        setAppId(null);
+        // eslint-disable-next-line promise/always-return
+        if (app._id && prevAppsLength > 0) {
+          switchService(app._id);
+        }
       })
       .catch(e => {
         console.log(e);
-        setErrorText(e);
+        setError(JSON.stringify(e));
       });
   };
 
-  const clear = () => {
-    clearAppStore()
-  }
+  const switchService = (appId: string) => {
+    setCurrentApp(appId);
+    emitToServer({
+      action_type: 'serviceSwitch',
+      app_id: appId,
+    });
+    messageAction({
+      type: 'REQUESTING',
+      payload: null,
+    });
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'ChatWindow',
+      })
+    );
+  };
 
   return (
-    <Provider>
-      <Portal>
-        <View style={styles.container}>
-          <Modal
-            contentContainerStyle={styles.modalContainer}
-            visible={isModalOpen}
-            onDismiss={closeModal}
-          >
-            <Surface style={styles.modalContainer}>
-              <View style={{ width: '100%' }}>
-                <TextInput
-                  label="Provide app id"
-                  value={appId}
-                  onChangeText={id => {
-                    setAppId(id);
-                  }}
-                />
-                <HelperText type="error" visible={errorText}>
-                  {errorText}
-                </HelperText>
-                <Button
-                  style={{ alignSelf: 'flex-end', marginTop: 20 }}
-                  onPress={() => saveApp(appId)}
-                >
-                  Submit
-                </Button>
-              </View>
-            </Surface>
-          </Modal>
-          {!isModalOpen && <Text>Apps count:{apps.length}</Text>}
-          {!isModalOpen && <Button onPress={showModal}>Add an app</Button>}
-          {!isModalOpen && <Button onPress={clear}>Clear store</Button>}
-        </View>
-      </Portal>
-    </Provider>
+    <AddApp
+      apps={apps}
+      saveApp={saveApp}
+      clearAppStore={clearAppStore}
+      errorText={error}
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
-  },
-  modalContainer: {
-    padding: 20,
-    height: 200,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
-    alignSelf: 'center',
-  },
-});

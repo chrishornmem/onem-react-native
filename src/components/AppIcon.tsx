@@ -11,9 +11,6 @@ export const AppIcon = (props: {
 }) => {
   const { name, iconBg, iconColor, size, style, ...rest } = props;
 
-    console.log("/appIcon");
-    console.log(props);
-
   return (
     <View
       style={[styles.item, { backgroundColor: iconBg }, style]}

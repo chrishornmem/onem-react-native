@@ -1,9 +1,9 @@
 import React from 'react';
 
 export type App = {
-  id: string;
+  _id: string;
   name: string;
-  about: string;
+  about_text: string;
   webAddIcon: string;
   webIconBg: string;
   webIconColor: string;
@@ -16,6 +16,7 @@ export type AppsContextType = {
   clearAppStore: () => void;
   getCurrentApp: () => void;
   setCurrentApp: (appId: string) => void;
+  setAllAppData: (all: App[]) => void;
 };
 
 export const AppsContext = React.createContext<AppsContextType>({
@@ -24,4 +25,5 @@ export const AppsContext = React.createContext<AppsContextType>({
   clearAppStore: () => {},
   getCurrentApp: () => {},
   setCurrentApp: () => {},
+  setAllAppData: () => {},
 });

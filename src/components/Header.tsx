@@ -48,7 +48,7 @@ export const Header = (props: {
 
   const homeEmitProps = {
     action_type: ONEM_ACTION.SERVICE_SWITCH,
-    app_id: getCurrentApp().id,
+    app_id: getCurrentApp()._id,
   };
 
   const handleHome = () => {

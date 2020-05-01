@@ -1,9 +1,10 @@
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useIsDrawerOpen } from '@react-navigation/drawer';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import {
   Button,
   Caption,
@@ -24,35 +25,67 @@ import { CustomAvatar } from './CustomAvatar';
 import { AppIcon } from './AppIcon';
 import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
+import { registerAppByName } from '../react-client-shared/api/register';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
+  const { navigation, progress } = props;
   const paperTheme = useTheme();
   const { userState, tokenAction } = React.useContext(AuthContext);
   const { messageAction } = React.useContext(MessageContext);
-  const { apps, getCurrentApp } = React.useContext(AppsContext);
-
-  console.log('apps:');
-  console.log(apps);
+  const {
+    apps,
+    getCurrentApp,
+    setCurrentApp,
+    setAllAppData,
+  } = React.useContext(AppsContext);
+  const isDrawerOpen = useIsDrawerOpen();
 
   const { rtl, theme, toggleRTL, toggleTheme } = React.useContext(
     PreferencesContext
   );
 
   const switchService = (appId: string) => {
-    props.navigation.closeDrawer();
+    console.log('/switchService:' + appId);
+    setCurrentApp(appId);
     emitToServer({
       action_type: 'serviceSwitch',
       app_id: appId,
     });
     messageAction({
-      type: 'SERVICE_SWITCH',
+      type: 'REQUESTING',
       payload: null,
     });
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: 'ChatWindow',
+      })
+    );
   };
 
-  const translateX = Animated.interpolate(props.progress, {
+  const refreshAppsList = async () => {
+    if (apps.length > 0) {
+      const appList = [];
+      apps.map(a => appList.push(a.name));
+      try {
+        const result = await registerAppByName(appList);
+        console.log(result);
+        setAllAppData(result.data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  React.useEffect(() => {
+    if (isDrawerOpen) {
+      refreshAppsList();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDrawerOpen]);
+
+  const translateX = Animated.interpolate(progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
     outputRange: [-100, -85, -70, -45, 0],
   });
@@ -73,7 +106,7 @@ export function DrawerContent(props: Props) {
           <TouchableOpacity
             style={{ marginLeft: 10 }}
             onPress={() => {
-              props.navigation.toggleDrawer();
+              navigation.toggleDrawer();
             }}
           >
             <CustomAvatar
@@ -98,7 +131,7 @@ export function DrawerContent(props: Props) {
                   accessibilityLabel="Login or Sign up"
                   mode="contained"
                   onPress={() =>
-                    props.navigation.dispatch(
+                    navigation.dispatch(
                       CommonActions.navigate({
                         name: 'Login',
                       })
@@ -127,7 +160,7 @@ export function DrawerContent(props: Props) {
                       type: 'LOGOUT',
                       payload: null,
                     });
-                    props.navigation.closeDrawer();
+                    navigation.closeDrawer();
                   }}
                 >
                   Logout
@@ -156,18 +189,17 @@ export function DrawerContent(props: Props) {
         </Drawer.Section>
         <Drawer.Section title="Apps">
           <List.Section style={{ paddingLeft: 0 }}>
-            {console.log('apps.length:' + apps.length)}
             {apps.map((app: App, i: any) => {
               return (
-                <TouchableRipple key={i} onPress={() => switchService(app.id)}>
+                <TouchableRipple key={i} onPress={() => switchService(app._id)}>
                   <List.Item
                     style={
-                      getCurrentApp().id === app.id
+                      getCurrentApp()._id === app._id
                         ? { backgroundColor: paperTheme.colors.background }
                         : undefined
                     }
                     title={app.name || 'name'}
-                    description={app.about || 'About the app'}
+                    description={app.about_text || 'About the app'}
                     descriptionNumberOfLines={1}
                     left={props => (
                       <AppIcon
@@ -193,7 +225,7 @@ export function DrawerContent(props: Props) {
                   accessibilityLabel="Home"
                   mode="outlined"
                   onPress={() => {
-                    props.navigation.dispatch(
+                    navigation.dispatch(
                       CommonActions.navigate({
                         name: 'AddApp',
                       })

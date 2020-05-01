@@ -9,12 +9,11 @@ import { Updates } from 'expo';
 import { useColorScheme } from 'react-native-appearance';
 
 import { RootNavigator } from './components/rootNavigator';
-import { AddAppScreen } from './components/AddAppScreen';
+import { AddAppInit } from './components/AddAppInit';
 
 import { PreferencesContext } from './context/preferencesContext';
 import { AppsContext, App } from './context/appsContext';
 
-import { Storage, STORAGE } from './react-client-shared/utils/Storage';
 import useAsyncStorage from './react-client-shared/hooks/useAsyncStorage';
 
 export const Main = () => {
@@ -30,13 +29,24 @@ export const Main = () => {
   const insertApp = (app: App) => {
     let a = appData.apps;
     app.current = a.length === 0;
-    a.push(app);
-    setApps({ apps: a });
+    if (!getApp(app._id)) {
+      a.push(app);
+      setApps({ apps: a });
+    }
   };
 
   const getCurrentApp = () => {
     for (let a of appData.apps) {
       if (a.current) {
+        return a;
+      }
+    }
+    return {_id: null};
+  };
+
+  const getApp = (appId: string) => {
+    for (let a of appData.apps) {
+      if (a._id === appId) {
         return a;
       }
     }
@@ -46,7 +56,7 @@ export const Main = () => {
   const setCurrentApp = (appId: string) => {
     let appsTemp = appData.apps;
     for (let a of appsTemp) {
-      if (a.id === appId) {
+      if (a._id === appId) {
         a.current = true;
       } else {
         a.current = false;
@@ -59,6 +69,12 @@ export const Main = () => {
   const clearAppStore = () => {
     setApps({ apps: [] });
   };
+
+  const setAllAppData = (all: App[]) => {
+    const currentApp = getCurrentApp();
+    setApps({ apps: all });
+    setCurrentApp(currentApp._id);
+  }
 
   const [rtl] = React.useState<boolean>(I18nManager.isRTL);
 
@@ -110,9 +126,14 @@ export const Main = () => {
       clearAppStore: clearAppStore,
       getCurrentApp: getCurrentApp,
       setCurrentApp: setCurrentApp,
+      setAllAppData: setAllAppData,
     }),
     [appData.apps]
   );
+
+  React.useEffect(() => {
+    clearAppStore();
+  },[]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,15 +157,13 @@ export const Main = () => {
                   }
             }
           >
-            {console.log('appsContext:')}
-            {console.log(JSON.stringify(appsContext))}
             {hydrated && (
               <>
                 {appsContext.apps && appsContext?.apps.length ? (
                   <RootNavigator />
                 ) : (
                   // <RootNavigator />
-                  <AddAppScreen />
+                  <AddAppInit />
                 )}
               </>
             )}

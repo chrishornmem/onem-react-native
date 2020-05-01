@@ -194,10 +194,8 @@ export const RootNavigator = () => {
       });
       if (!tokenState.token) {
         const tokenStateRaw = await storage.get('token');
-        console.log('tokenRaw:' + tokenStateRaw);
         if (tokenStateRaw) {
           const parsedToken = JSON.parse(tokenStateRaw);
-          console.log('token:' + parsedToken.token);
           if (parsedToken.token) {
             tokenAction({
               type: 'STORE_TOKEN',

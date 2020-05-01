@@ -61,7 +61,7 @@ export const LoginScreen: React.FC<{ navigation: NavigationProp }> = ({
       if (tokenState.token && !tokenState.loggingIn) {
         openPopupWindow();
       }
-    }, [handleRedirect, navigation, tokenState, url])
+    }, [])
   );
 
   return <></>;

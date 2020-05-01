@@ -11,6 +11,7 @@ import { Video } from 'expo-av';
 import { ScrollView } from 'react-native';
 
 import { Button, Caption, Card, Paragraph, useTheme } from 'react-native-paper';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 
 import { MtText, MenuItem } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
@@ -31,6 +32,7 @@ const SwitchMenuItem: React.FC<{
 }> = ({ item, token, tokenAction, dispatch, index }) => {
 
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const clicked = (i: Number) => {
     dispatch({
@@ -116,7 +118,13 @@ const SwitchMenuItem: React.FC<{
           uppercase={false}
           accessibilityLabel="Login or Sign up"
           mode="contained"
-          onPress={() => console.log('Pressed')}
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.navigate({
+                name: 'Login',
+              })
+            )
+          }
         >
           Login / Sign Up
         </Button>
@@ -130,8 +138,15 @@ const SwitchMenuItem: React.FC<{
           uppercase={false}
           accessibilityLabel="Logout"
           mode="contained"
-          onPress={() => console.log('Pressed')}
-        >
+          onPress={() => {
+            tokenAction({
+              type: 'LOGOUT',
+            });
+            dispatch({
+              type: 'LOGOUT',
+              payload: null,
+            });
+          }}>
           Logout
         </Button>
       );

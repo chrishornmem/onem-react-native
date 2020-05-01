@@ -242,8 +242,6 @@ class FloatingAction extends Component {
     } = this.props;
     const { active } = this.state;
 
-    console.log("pressed");
-
     if (dismissKeyboardOnPress) {
       Keyboard.dismiss();
     }
