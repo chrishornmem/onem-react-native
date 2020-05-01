@@ -9,6 +9,7 @@ import { Linking } from 'expo';
 import * as WebBrowser from 'expo-web-browser';
 import { makeKeyFromPrefix } from '../react-client-shared/utils';
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
+import { AUTH_URL } from '../react-client-shared/config';
 
 export const LoginScreen: React.FC<{ navigation: NavigationProp }> = ({
   navigation,
@@ -16,7 +17,6 @@ export const LoginScreen: React.FC<{ navigation: NavigationProp }> = ({
   const { tokenState, tokenAction } = React.useContext(AuthContext);
   const token = tokenState.token;
   const linkingUrl = Linking.makeUrl() + '?';
-  const AUTH_URL = 'https://c4e770d5.eu.ngrok.io';
   const url = `${AUTH_URL}/login?t=${token}&c=${makeKeyFromPrefix(
     'context'
   )}&l=${linkingUrl}`;

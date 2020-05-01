@@ -72,8 +72,12 @@ export const Main = () => {
 
   const setAllAppData = (all: App[]) => {
     const currentApp = getCurrentApp();
+    console.log("/setAllAppData");
+    console.log(all);
     setApps({ apps: all });
-    setCurrentApp(currentApp._id);
+    if (currentApp._id) {
+      setCurrentApp(currentApp._id);
+    }
   }
 
   const [rtl] = React.useState<boolean>(I18nManager.isRTL);
@@ -130,10 +134,6 @@ export const Main = () => {
     }),
     [appData.apps]
   );
-
-  React.useEffect(() => {
-    clearAppStore();
-  },[]);
 
   return (
     <SafeAreaView style={styles.container}>

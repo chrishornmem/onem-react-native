@@ -1,4 +1,5 @@
 import React, { Suspense } from 'react';
+import { Video } from 'expo-av';
 
 import {
   Dimensions,
@@ -7,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Video } from 'expo-av';
 import { ScrollView } from 'react-native';
 
 import { Button, Caption, Card, Paragraph, useTheme } from 'react-native-paper';
@@ -17,7 +17,6 @@ import { MtText, MenuItem } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
 import { isVideoUrl } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
-
 
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -30,7 +29,6 @@ const SwitchMenuItem: React.FC<{
   dispatch: any;
   index: number;
 }> = ({ item, token, tokenAction, dispatch, index }) => {
-
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -58,21 +56,38 @@ const SwitchMenuItem: React.FC<{
               </Button>
             </>
           ) : (
-            <TouchableOpacity onPress={() => clicked(index)}>
+            <>
               {!isVideoUrl(item.src) ? (
-                <Image
-                  style={{ borderRadius: 5, width: '100%' }}
-                  source={{ uri: item.src }}
-                  resizeMode="contain"
-                />
+                <TouchableOpacity onPress={() => clicked(index)}>
+                  <ResponsiveImage
+                    width={Dimensions.get('window').width - 32}
+                    style={{ borderRadius: 5 }}
+                    uri={item.src}
+                    // resizeMode="contain"
+                  />
+                  <Caption>{item.description}</Caption>
+                </TouchableOpacity>
               ) : (
-                <Video
-                  style={{ borderRadius: 5, width: '100%' }}
-                  source={{ uri: item.src }}
-                ></Video>
+                <>
+                  <Video
+                    style={{
+                      //      borderRadius: 5,
+                      width: Dimensions.get('window').width - 32,
+                      height: 300,
+                    }}
+                    source={{ uri: item.src }}
+                    //shouldPlay
+                    useNativeControls
+                    onError={e => {
+                      console.log(e);
+                    }}
+                  />
+                  <TouchableOpacity onPress={() => clicked(index)}>
+                    <Caption>{item.description}</Caption>
+                  </TouchableOpacity>
+                </>
               )}
-              <Caption>{item.description}</Caption>
-            </TouchableOpacity>
+            </>
           )}
         </>
       );
@@ -146,7 +161,8 @@ const SwitchMenuItem: React.FC<{
               type: 'LOGOUT',
               payload: null,
             });
-          }}>
+          }}
+        >
           Logout
         </Button>
       );

@@ -77,7 +77,7 @@ export const RootNavigator = () => {
       if (tokenState.loggingIn) {
         emitToServer({
           action_type: 'serviceSwitch',
-          app_id: getCurrentApp().id,
+          app_id: getCurrentApp()._id,
         });
         messageAction({
           type: 'SERVICE_SWITCH',
@@ -86,7 +86,7 @@ export const RootNavigator = () => {
       } else {
         emitToServer({
           action_type: 'refreshContext',
-          app_id: getCurrentApp().id,
+          app_id: getCurrentApp()._id,
         });
         messageAction({
           type: 'REFRESH',
