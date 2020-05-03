@@ -1,10 +1,15 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React, { Suspense } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, KeyboardTypeOptions } from 'react-native';
 import { HelperText, Paragraph, TextInput } from 'react-native-paper';
 import DateSelect from './DateSelect';
-import { FormItem } from '../react-client-shared/utils';
+import {
+  FormItem,
+  isOfTypeKeyboardTypeOptions,
+  isOfTypeTextContentType,
+  isOfTypeAutoCompleteType,
+} from '../react-client-shared/utils';
 
 const SwitchType: React.FC<{
   item: FormItem;
@@ -40,9 +45,8 @@ const SwitchType: React.FC<{
   //     }
   //   },[inputEl]);
 
-  let type: string;
+  let type: string = 'default';
   let multiline = false;
-
   switch (item.type) {
     case 'date':
     case 'time':
@@ -165,27 +169,38 @@ const SwitchType: React.FC<{
     //   );
 
     case 'int':
+      type = 'number-pad';
+      break;
+    case 'float':
+      type = 'decimal-pad';
+      break;
     case 'tel':
+      type = 'phone-pad';
+      break;
     case 'string':
     case 'text':
     case 'textarea':
-    case 'url':
-    case 'email':
-    default:
-      if (item.type === 'int' || item.type === 'float') {
-        type = 'number';
-      } else if (item.type === 'string') {
-        type = 'text';
-      } else if (item.type === 'textarea') {
-        type = 'text';
+      if (item.type == 'textarea') {
         multiline = true;
-      } else {
-        type = item.type;
       }
-      // const component = item.type === 'textarea' ? TextareaAutosize : TextField;
-      return (
-        <>
-          {/* <Typography style={labelStyle}>
+      type = 'default';
+      break;
+    case 'url':
+      type = Platform.OS == 'ios' ? 'url' : 'default';
+      break;
+    case 'email':
+      type = 'email-address';
+      break;
+    default:
+      break;
+  }
+  console.log('item.type:' + item.type);
+  console.log('type:' + type);
+  console.log(JSON.stringify(isOfTypeKeyboardTypeOptions(type)));
+  // const component = item.type === 'textarea' ? TextareaAutosize : TextField;
+  return (
+    <>
+      {/* <Typography style={labelStyle}>
             {item.description ? item.description.replace('\n', '\n\n') : ''}
           </Typography>
           <Field
@@ -203,24 +218,32 @@ const SwitchType: React.FC<{
             placeholder={item.header}
             helperText={props.errors[item.name] || ''}
           /> */}
-          <Paragraph>{item.description}</Paragraph>
-          <TextInput
-            // label={
-            //   item.description ? item.description.replace('\n', '\n\n') : ''
-            // }
-            value={props.values[item.name]}
-            onChangeText={props.handleChange(item.name)}
-            onBlur={props.handleBlur(item.name)}
-            error={props.errors[item.name] !== ''}
-            multiline={multiline}
-            placeholder={item.header}
-          />
-          <HelperText type="error" visible={props.errors[item.name] !== ''}>
-            {props.errors[item.name]}
-          </HelperText>
-        </>
-      );
-  }
+      <Paragraph>{item.description}</Paragraph>
+      <TextInput
+        // label={
+        //   item.description ? item.description.replace('\n', '\n\n') : ''
+        // }
+        value={props.values[item.name]}
+        onChangeText={props.handleChange(item.name)}
+        onBlur={props.handleBlur(item.name)}
+        error={props.errors[item.name] !== ''}
+        multiline={multiline}
+        placeholder={item.header}
+        autoCompleteType={
+          isOfTypeAutoCompleteType(item.name) ? item.name : undefined
+        }
+        defaultValue={props.values[item.name]}
+        keyboardType={isOfTypeKeyboardTypeOptions(type) ? type : 'default'}
+        textContentType={
+          isOfTypeTextContentType(item.name) ? item.name : undefined
+        }
+        maxLength={item.max_length || undefined}
+      />
+      <HelperText type="error" visible={props.errors[item.name] !== ''}>
+        {props.errors[item.name]}
+      </HelperText>
+    </>
+  );
 };
 
 export default SwitchType;
