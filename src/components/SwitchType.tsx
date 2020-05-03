@@ -1,8 +1,10 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React, { Suspense } from 'react';
-import { StyleSheet } from 'react-native';
-import { Paragraph } from 'react-native-paper';
+import { Platform, StyleSheet } from 'react-native';
+import { HelperText, Paragraph, TextInput } from 'react-native-paper';
+import DateSelect from './DateSelect';
+import { FormItem } from '../react-client-shared/utils';
 
 const SwitchType: React.FC<{
   item: FormItem;
@@ -10,9 +12,6 @@ const SwitchType: React.FC<{
   props: any;
   isFocussed?: any;
 }> = ({ item, tabIndex, props, isFocussed }) => {
-
-  logger.info('/SwitchType:' + isSmall);
-
   function makeSelectOptions(body: any) {
     let options: any = [];
     let contentItems: any = [];
@@ -41,138 +40,129 @@ const SwitchType: React.FC<{
   //     }
   //   },[inputEl]);
 
+  let type: string;
+  let multiline = false;
+
   switch (item.type) {
     case 'date':
-      return (
-        <>
-          <Paragraph>
-            {item.description ? item.description.replace('\n', '\n\n') : ''}
-          </Paragraph>
-          <Field
-            name={item.name}
-            hiddenLabel
-            size="small"
-            component={DatePicker}
-            label=""
-          />
-        </>
-      );
+    case 'time':
+      return <DateSelect formikProps={props} item={item} />;
 
-    case 'form-menu': {
-      const [options, contentItems] = makeSelectOptions(item.body);
+    // case 'form-menu': {
+    //   const [options, contentItems] = makeSelectOptions(item.body);
 
-      // logger.info("options")
-      // logger.info(options)
-      // logger.info("label")
-      // logger.info(label)
+    //   // logger.info("options")
+    //   // logger.info(options)
+    //   // logger.info("label")
+    //   // logger.info(label)
 
-      logger.info('props');
-      logger.info(props);
+    //   logger.info('props');
+    //   logger.info(props);
 
-      if (item.meta.multi_select !== 1) {
-        return (
-          <>
-            {contentItems.map((item: any, i: number) => (
-              <Typography key={i} style={labelStyle}>
-                {' '}
-                {item}{' '}
-              </Typography>
-            ))}
-            <Field
-              innerRef={handleRef}
-              name={item.name}
-              // label={label}
-              // options={options}
-              autoWidth
-              as={Select}
-              size="small"
-            >
-              {/* <Select
-                        multiple={item.meta.multi_select === 1}
-                        value={props.values[item.name]}
-                        inputProps={{ tabIndex }}
-                        onChange={(e) => {props.setFieldValue(item.name, e.target.value)}}
-                        input={<Input />}
-                        > */}
-              {options.map((name: any) => (
-                <MenuItem dense key={name.label} value={name.value}>
-                  {name.label}
-                </MenuItem>
-              ))}
-              {/* </Select> */}
-            </Field>
-          </>
-        );
-      } else {
-        return (
-          <>
-            {contentItems.map((item: any, i: number) => (
-              <Typography key={i} style={labelStyle}>
-                {' '}
-                {item}{' '}
-              </Typography>
-            ))}
-            <MultiSelect
-              name={item.name}
-              options={options}
-              tabIndex={tabIndex}
-              formikProps={props}
-            />
-          </>
-        );
-      }
-    }
+    //   if (item.meta.multi_select !== 1) {
+    //     return (
+    //       <>
+    //         {contentItems.map((item: any, i: number) => (
+    //           <Typography key={i} style={labelStyle}>
+    //             {' '}
+    //             {item}{' '}
+    //           </Typography>
+    //         ))}
+    //         <Field
+    //           innerRef={Ref}
+    //           name={item.name}
+    //           // label={label}
+    //           // options={options}
+    //           autoWidth
+    //           as={Select}
+    //           size="small"
+    //         >
+    //           {/* <Select
+    //                     multiple={item.meta.multi_select === 1}
+    //                     value={props.values[item.name]}
+    //                     inputProps={{ tabIndex }}
+    //                     onChange={(e) => {props.setFieldValue(item.name, e.target.value)}}
+    //                     input={<Input />}
+    //                     > */}
+    //           {options.map((name: any) => (
+    //             <MenuItem dense key={name.label} value={name.value}>
+    //               {name.label}
+    //             </MenuItem>
+    //           ))}
+    //           {/* </Select> */}
+    //         </Field>
+    //       </>
+    //     );
+    //   } else {
+    //     return (
+    //       <>
+    //         {contentItems.map((item: any, i: number) => (
+    //           <Typography key={i} style={labelStyle}>
+    //             {' '}
+    //             {item}{' '}
+    //           </Typography>
+    //         ))}
+    //         <MultiSelect
+    //           name={item.name}
+    //           options={options}
+    //           tabIndex={tabIndex}
+    //           formikProps={props}
+    //         />
+    //       </>
+    //     );
+    //   }
+    // }
 
-    case 'hidden':
-      return null;
+    // case 'hidden':
+    //   return null;
 
-    case 'range':
-      logger.info('range:' + item.default);
+    // case 'range':
+    //   logger.info('range:' + item.default);
 
-      return (
-        <>
-          <Typography style={labelStyle}>
-            {item.description ? item.description.replace('\n', '\n\n') : ''}
-          </Typography>
-          <Field
-            innerRef={handleRef}
-            name={item.name}
-            step={item.step}
-            min={item.min_value}
-            max={item.max_value}
-            // label={label}
-            // options={options}
-            component={SliderField}
-            valueLabelDisplay="auto"
-            defaultValue={item.default}
-          ></Field>
-        </>
-      );
-    case 'phone':
-    case 'mobile':
-      return (
-        <>
-          <Typography style={labelStyle}>
-            {item.description ? item.description.replace('\n', '\n\n') : ''}
-          </Typography>
-          <PhoneField
-            // innerRef={(el :any) => inputEl = el}
-            innerRef={handleRef}
-            type="tel"
-            hiddenLabel
-            label=""
-            margin="dense"
-            size="small"
-            as={TextField}
-            name={item.name}
-            placeholder={item.header}
-            helperText={props.errors[item.name] || ''}
-            formikProps={props}
-            InputProps={{ tabIndex: tabIndex, classes: { root: classes.root } }}
-            required={item.required === 1}
-          />
-        </>
-      );
+    //   return (
+    //     <>
+    //       <Typography style={labelStyle}>
+    //         {item.description ? item.description.replace('\n', '\n\n') : ''}
+    //       </Typography>
+    //       <Field
+    //         innerRef={handleRef}
+    //         name={item.name}
+    //         step={item.step}
+    //         min={item.min_value}
+    //         max={item.max_value}
+    //         // label={label}
+    //         // options={options}
+    //         component={SliderField}
+    //         valueLabelDisplay="auto"
+    //         defaultValue={item.default}
+    //       ></Field>
+    //     </>
+    //   );
+    // case 'phone':
+    // case 'mobile':
+    //   return (
+    //     <>
+    //       <Typography style={labelStyle}>
+    //         {item.description ? item.description.replace('\n', '\n\n') : ''}
+    //       </Typography>
+    //       <PhoneField
+    //         // innerRef={(el :any) => inputEl = el}
+    //         innerRef={handleRef}
+    //         type="tel"
+    //         hiddenLabel
+    //         label=""
+    //         margin="dense"
+    //         size="small"
+    //         as={TextField}
+    //         name={item.name}
+    //         placeholder={item.header}
+    //         helperText={props.errors[item.name] || ''}
+    //         formikProps={props}
+    //         InputProps={{ tabIndex: tabIndex, classes: { root: classes.root } }}
+    //         required={item.required === 1}
+    //       />
+    //     </>
+    //   );
 
     case 'int':
     case 'tel':
@@ -182,8 +172,6 @@ const SwitchType: React.FC<{
     case 'url':
     case 'email':
     default:
-      let type: string;
-      let multiline = false;
       if (item.type === 'int' || item.type === 'float') {
         type = 'number';
       } else if (item.type === 'string') {
@@ -197,7 +185,7 @@ const SwitchType: React.FC<{
       // const component = item.type === 'textarea' ? TextareaAutosize : TextField;
       return (
         <>
-          <Typography style={labelStyle}>
+          {/* <Typography style={labelStyle}>
             {item.description ? item.description.replace('\n', '\n\n') : ''}
           </Typography>
           <Field
@@ -214,7 +202,22 @@ const SwitchType: React.FC<{
             name={item.name}
             placeholder={item.header}
             helperText={props.errors[item.name] || ''}
+          /> */}
+          <Paragraph>{item.description}</Paragraph>
+          <TextInput
+            // label={
+            //   item.description ? item.description.replace('\n', '\n\n') : ''
+            // }
+            value={props.values[item.name]}
+            onChangeText={props.handleChange(item.name)}
+            onBlur={props.handleBlur(item.name)}
+            error={props.errors[item.name] !== ''}
+            multiline={multiline}
+            placeholder={item.header}
           />
+          <HelperText type="error" visible={props.errors[item.name] !== ''}>
+            {props.errors[item.name]}
+          </HelperText>
         </>
       );
   }

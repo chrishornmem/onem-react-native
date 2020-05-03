@@ -99,7 +99,7 @@ function ItemList({
       } else if (item.type === 'date') {
         if (values[item.name] === '') {
           touchedFields.push(item.name);
-          values[item.name] = new Date().toString();
+          values[item.name] = new Date();
         }
       } else if (item.type === 'form-menu' && Array.isArray(item.body)) {
         item.body = item.body || [{ value: '' }];
@@ -288,22 +288,20 @@ function ItemList({
                     {body.map((item: FormItem, i: any) => {
                       return (
                         <View key={i}>
-                          {/* <Suspense fallback={<></>}>
-                              <SwitchType
-                                item={item}
-                                isFocussed={(val: any) => {
-                                  setIsFocussed(val);
-                                }}
-                                tabIndex={i + 1}
-                                props={props}
-                              />
-                            </Suspense> */}
-                          <Paragraph>{item.description}</Paragraph>
+                          <SwitchType
+                            item={item}
+                            isFocussed={(val: any) => {
+                              setIsFocussed(val);
+                            }}
+                            tabIndex={i + 1}
+                            props={props}
+                          />
+                          {/* <Paragraph>{item.description}</Paragraph>
                           <TextInput
                             onChangeText={props.handleChange(item.name)}
                             onBlur={props.handleBlur(item.name)}
                             value={props.values[item.name]}
-                          />
+                          /> */}
                         </View>
                       );
                     })}
