@@ -114,11 +114,11 @@ function ItemList({
           }
         } else if (item.default !== null) {
           values[item.name] = item.default;
-        } else {
+       // } else {
           // logger.info("item.body:")
           // logger.info(item.body);
           // logger.info("form-menu:" + (item.body.slice(1, 2)[0] as any).value);
-          values[item.name] = (item.body.slice(1, 2)[0] as any).value;
+       //   values[item.name] = (item.body.slice(1, 2)[0] as any).value;
         }
       }
     });

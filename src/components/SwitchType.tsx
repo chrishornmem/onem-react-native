@@ -4,6 +4,8 @@ import React, { Suspense } from 'react';
 import { Platform, StyleSheet, KeyboardTypeOptions } from 'react-native';
 import { HelperText, Paragraph, TextInput } from 'react-native-paper';
 import DateSelect from './DateSelect';
+import SingleSelect from './SingleSelect';
+
 import {
   FormItem,
   isOfTypeKeyboardTypeOptions,
@@ -17,28 +19,23 @@ const SwitchType: React.FC<{
   props: any;
   isFocussed?: any;
 }> = ({ item, tabIndex, props, isFocussed }) => {
-  function makeSelectOptions(body: any) {
-    let options: any = [];
-    let contentItems: any = [];
-    body.forEach(
-      (option: { type: string; description: string; value: any }) => {
-        if (option.type === 'option') {
-          options.push({ label: option.description, value: option.value });
-        } else {
-          contentItems.push(option.description);
-        }
-      }
-    );
-    return [options, contentItems];
+  function handleSelect(value: string, index: number) {
+    console.log('onChangeText');
+    console.log(value);
+    console.log(index);
+    props.setFieldValue(item.name, options[index].actualValue);
+    props.setFieldTouched(item.name, true);
   }
+
+  const [selected, setSelected] = React.useState(props.values[item.name]);
 
   // let inputEl :any = null;
   // let inputEl = React.useRef(React.createElement('div'));
 
   // React.useEffect(() => {
   //     if (inputEl && inputEl.current) {
-  //         logger.info("inputEl:")
-  //         logger.info(inputEl.current);
+  //         console.log("inputEl:")
+  //         console.log(inputEl.current);
   //         inputEl.current.getElementsByTagName('input')[0].onfocus = function() {
   //             inputEl.current.getElementsByTagName('input')[0].blur();
   //         }
@@ -52,76 +49,43 @@ const SwitchType: React.FC<{
     case 'time':
       return <DateSelect formikProps={props} item={item} />;
 
-    // case 'form-menu': {
-    //   const [options, contentItems] = makeSelectOptions(item.body);
+    case 'form-menu': {
+      // if (item.meta.multi_select !== 1) {
+        return (
+          <>
+            {/* {contentItems.map((item: any, i: number) => (
+              <Paragraph key={i}> {item} </Paragraph>
+            ))} */}
+            <SingleSelect formikProps={props} item={item} />
+          </>
+        );
+      // } else {
+      //   return (
+      //     <>
+      //       <Dropdown
+      //         label={contentItems.join('\n')}
+      //         value={item.default || undefined}
+      //         data={options}
+      //         onChangeText={(value: string, index: number) => {
+      //           // console.log('onChangeText');
+      //           // console.log(item.name);
+      //           // console.log(value);
+      //           // console.log(index);
+      //           // console.log(options[index].actualValue);
+      //           props.setFieldValue(item.name, options[index].actualValue);
+      //           props.setFieldTouched(item.name, true);
+      //         }}
+      //       />
+      //     </>
+      //   );
+      // }
+    }
 
-    //   // logger.info("options")
-    //   // logger.info(options)
-    //   // logger.info("label")
-    //   // logger.info(label)
-
-    //   logger.info('props');
-    //   logger.info(props);
-
-    //   if (item.meta.multi_select !== 1) {
-    //     return (
-    //       <>
-    //         {contentItems.map((item: any, i: number) => (
-    //           <Typography key={i} style={labelStyle}>
-    //             {' '}
-    //             {item}{' '}
-    //           </Typography>
-    //         ))}
-    //         <Field
-    //           innerRef={Ref}
-    //           name={item.name}
-    //           // label={label}
-    //           // options={options}
-    //           autoWidth
-    //           as={Select}
-    //           size="small"
-    //         >
-    //           {/* <Select
-    //                     multiple={item.meta.multi_select === 1}
-    //                     value={props.values[item.name]}
-    //                     inputProps={{ tabIndex }}
-    //                     onChange={(e) => {props.setFieldValue(item.name, e.target.value)}}
-    //                     input={<Input />}
-    //                     > */}
-    //           {options.map((name: any) => (
-    //             <MenuItem dense key={name.label} value={name.value}>
-    //               {name.label}
-    //             </MenuItem>
-    //           ))}
-    //           {/* </Select> */}
-    //         </Field>
-    //       </>
-    //     );
-    //   } else {
-    //     return (
-    //       <>
-    //         {contentItems.map((item: any, i: number) => (
-    //           <Typography key={i} style={labelStyle}>
-    //             {' '}
-    //             {item}{' '}
-    //           </Typography>
-    //         ))}
-    //         <MultiSelect
-    //           name={item.name}
-    //           options={options}
-    //           tabIndex={tabIndex}
-    //           formikProps={props}
-    //         />
-    //       </>
-    //     );
-    //   }
-    // }
-
-    // case 'hidden':
-    //   return null;
+    case 'hidden':
+      return null;
 
     // case 'range':
-    //   logger.info('range:' + item.default);
+    //   console.log('range:' + item.default);
 
     //   return (
     //     <>
@@ -171,11 +135,12 @@ const SwitchType: React.FC<{
     case 'int':
       type = 'number-pad';
       break;
-    case 'float':
-      type = 'decimal-pad';
-      break;
+    case 'phone':
     case 'tel':
       type = 'phone-pad';
+      break;
+    case 'float':
+      type = 'decimal-pad';
       break;
     case 'string':
     case 'text':
