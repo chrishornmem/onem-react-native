@@ -39,14 +39,9 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
     code: 'GB',
     dial_code: '+44',
   });
-
   const [error, setError] = React.useState('');
-
   const [showModal, setShowModal] = React.useState(false);
-
   const [countryData, setCountryData] = React.useState([]);
-
-  //const theme = useTheme();
 
   const handleChange = (value: string) => {
     try {
@@ -111,7 +106,12 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
       {/* phone section  */}
       <View style={styles.infoContainer}>
         {/* country flag */}
-        <TouchableWithoutFeedback onPress={() => setShowModal(true)}>
+        <TouchableWithoutFeedback
+          onPress={() => {
+            console.log('clicked');
+            setShowModal(true);
+          }}
+        >
           <View
             style={{
               flexDirection: 'row',
@@ -136,7 +136,7 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
         <TextInput
           style={styles.input}
           keyboardType={'phone-pad'}
-          //    returnKeyType="done"
+          returnKeyType="done"
           autoCapitalize="none"
           autoCorrect={false}
           secureTextEntry={false}
@@ -145,8 +145,9 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
         />
       </View>
       <HelperText type="error">{error}</HelperText>
-      <Portal>
+
         <View style={{ flex: 1 }}>
+        <Portal>
           <Modal
             contentContainerStyle={[
               styles.modalContainer,
@@ -192,8 +193,8 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
               Close
             </Button>
           </Modal>
+          </Portal>
         </View>
-      </Portal>
     </>
   );
 };
