@@ -10,6 +10,7 @@ import { transformAll } from '@overgear/yup-ast';
 
 import { MtText, FormItem } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
+import { toArrayOrNumber } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -53,6 +54,7 @@ function ItemList({
     let touchedFields: string[] = [];
 
     body.forEach((item: FormItem, i: any) => {
+
       if (item.default !== null) {
         touchedFields.push(item.name);
         if (

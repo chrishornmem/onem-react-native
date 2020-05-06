@@ -72,8 +72,6 @@ export const Main = () => {
 
   const setAllAppData = (all: App[]) => {
     const currentApp = getCurrentApp();
-    console.log("/setAllAppData");
-    console.log(all);
     setApps({ apps: all });
     if (currentApp._id) {
       setCurrentApp(currentApp._id);

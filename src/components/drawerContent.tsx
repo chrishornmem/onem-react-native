@@ -47,7 +47,6 @@ export function DrawerContent(props: Props) {
   );
 
   const switchService = (appId: string) => {
-    console.log('/switchService:' + appId);
     setCurrentApp(appId);
     emitToServer({
       action_type: 'serviceSwitch',
@@ -70,7 +69,6 @@ export function DrawerContent(props: Props) {
       apps.map(a => appList.push(a.name));
       try {
         const result = await registerAppByName(appList);
-        console.log(result);
         setAllAppData(result.data);
       } catch (e) {
         console.log(e);

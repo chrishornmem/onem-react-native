@@ -5,9 +5,13 @@ import { Platform, StyleSheet, KeyboardTypeOptions } from 'react-native';
 import { HelperText, Paragraph, TextInput } from 'react-native-paper';
 import DateSelect from './DateSelect';
 import SingleSelect from './SingleSelect';
+import CustomMultiSelect from './CustomMultiSelect';
+import CustomRange from './CustomRange';
+import CustomPhoneInput from './CustomPhoneInput';
+
+import { FormItem } from '../react-client-shared/utils/Message';
 
 import {
-  FormItem,
   isOfTypeKeyboardTypeOptions,
   isOfTypeTextContentType,
   isOfTypeAutoCompleteType,
@@ -19,16 +23,6 @@ const SwitchType: React.FC<{
   props: any;
   isFocussed?: any;
 }> = ({ item, tabIndex, props, isFocussed }) => {
-  function handleSelect(value: string, index: number) {
-    console.log('onChangeText');
-    console.log(value);
-    console.log(index);
-    props.setFieldValue(item.name, options[index].actualValue);
-    props.setFieldTouched(item.name, true);
-  }
-
-  const [selected, setSelected] = React.useState(props.values[item.name]);
-
   // let inputEl :any = null;
   // let inputEl = React.useRef(React.createElement('div'));
 
@@ -50,62 +44,19 @@ const SwitchType: React.FC<{
       return <DateSelect formikProps={props} item={item} />;
 
     case 'form-menu': {
-      // if (item.meta.multi_select !== 1) {
-        return (
-          <>
-            {/* {contentItems.map((item: any, i: number) => (
-              <Paragraph key={i}> {item} </Paragraph>
-            ))} */}
-            <SingleSelect formikProps={props} item={item} />
-          </>
-        );
-      // } else {
-      //   return (
-      //     <>
-      //       <Dropdown
-      //         label={contentItems.join('\n')}
-      //         value={item.default || undefined}
-      //         data={options}
-      //         onChangeText={(value: string, index: number) => {
-      //           // console.log('onChangeText');
-      //           // console.log(item.name);
-      //           // console.log(value);
-      //           // console.log(index);
-      //           // console.log(options[index].actualValue);
-      //           props.setFieldValue(item.name, options[index].actualValue);
-      //           props.setFieldTouched(item.name, true);
-      //         }}
-      //       />
-      //     </>
-      //   );
-      // }
+      if (item.meta.multi_select !== 1) {
+        return <SingleSelect formikProps={props} item={item} />;
+      } else {
+        return <CustomMultiSelect formikProps={props} item={item} />;
+      }
     }
 
     case 'hidden':
       return null;
 
-    // case 'range':
-    //   console.log('range:' + item.default);
+    case 'range':
+      return <CustomRange formikProps={props} item={item} />;
 
-    //   return (
-    //     <>
-    //       <Typography style={labelStyle}>
-    //         {item.description ? item.description.replace('\n', '\n\n') : ''}
-    //       </Typography>
-    //       <Field
-    //         innerRef={handleRef}
-    //         name={item.name}
-    //         step={item.step}
-    //         min={item.min_value}
-    //         max={item.max_value}
-    //         // label={label}
-    //         // options={options}
-    //         component={SliderField}
-    //         valueLabelDisplay="auto"
-    //         defaultValue={item.default}
-    //       ></Field>
-    //     </>
-    //   );
     // case 'phone':
     // case 'mobile':
     //   return (
@@ -136,6 +87,7 @@ const SwitchType: React.FC<{
       type = 'number-pad';
       break;
     case 'phone':
+      return <CustomPhoneInput formikProps={props} item={item} />;
     case 'tel':
       type = 'phone-pad';
       break;
@@ -159,9 +111,7 @@ const SwitchType: React.FC<{
     default:
       break;
   }
-  console.log('item.type:' + item.type);
-  console.log('type:' + type);
-  console.log(JSON.stringify(isOfTypeKeyboardTypeOptions(type)));
+
   // const component = item.type === 'textarea' ? TextareaAutosize : TextField;
   return (
     <>
