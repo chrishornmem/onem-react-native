@@ -1,7 +1,15 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React, { Suspense } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Platform,
+  Keyboard,
+} from 'react-native';
 
 import { Paragraph, Card, TextInput } from 'react-native-paper';
 
@@ -54,7 +62,6 @@ function ItemList({
     let touchedFields: string[] = [];
 
     body.forEach((item: FormItem, i: any) => {
-
       if (item.default !== null) {
         touchedFields.push(item.name);
         if (
@@ -116,11 +123,11 @@ function ItemList({
           }
         } else if (item.default !== null) {
           values[item.name] = item.default;
-       // } else {
+          // } else {
           // logger.info("item.body:")
           // logger.info(item.body);
           // logger.info("form-menu:" + (item.body.slice(1, 2)[0] as any).value);
-       //   values[item.name] = (item.body.slice(1, 2)[0] as any).value;
+          //   values[item.name] = (item.body.slice(1, 2)[0] as any).value;
         }
       }
     });
@@ -256,61 +263,66 @@ function ItemList({
   const [isFocussed, setIsFocussed] = React.useState(false);
 
   return (
-    <>
-      <Formik
-        onSubmit={handleSubmit}
-        initialValues={values}
-        initialTouched={touchedFields}
-        // enableReinitialize={true}
-        validationSchema={schema}
-        initialStatus={disableSubmitButton}
-      >
-        {props => {
-          logger.info('props');
-          logger.info(props);
-          return (
-            <>
-              <Header
-                title={formHeader}
-                dispatch={dispatch}
-                leftVariant="cancel"
-                handleLeftClick={() => {
-                  handleReset(props.resetForm);
-                }}
-                rightVariant="submit"
-                // rightDisabled={Object.keys(props.errors).length !== 0}
-                rightDisabled={
-                  disableSubmitButton && (!props.dirty || !props.isValid)
-                }
-                handleSubmit={props.handleSubmit}
-              />
-              <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
-                <Card.Content style={styles.container}>
-                  <ScrollView>
-                    {body.map((item: FormItem, i: any) => {
-                      return (
-                        <View key={i}>
-                          <SwitchType
-                            item={item}
-                            isFocussed={(val: any) => {
-                              setIsFocussed(val);
-                            }}
-                            tabIndex={i + 1}
-                            props={props}
-                          />
-                          {/* <Paragraph>{item.description}</Paragraph>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.keyboardContainer}
+      //  behavior={Platform.OS == 'ios' ? 'position' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Formik
+          onSubmit={handleSubmit}
+          initialValues={values}
+          initialTouched={touchedFields}
+          // enableReinitialize={true}
+          validationSchema={schema}
+          initialStatus={disableSubmitButton}
+        >
+          {props => {
+            logger.info('props');
+            logger.info(props);
+            return (
+              <>
+                <Header
+                  title={formHeader}
+                  dispatch={dispatch}
+                  leftVariant="cancel"
+                  handleLeftClick={() => {
+                    handleReset(props.resetForm);
+                  }}
+                  rightVariant="submit"
+                  // rightDisabled={Object.keys(props.errors).length !== 0}
+                  rightDisabled={
+                    disableSubmitButton && (!props.dirty || !props.isValid)
+                  }
+                  handleSubmit={props.handleSubmit}
+                />
+                <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
+                  <Card.Content style={styles.container}>
+                    <ScrollView>
+                      {body.map((item: FormItem, i: any) => {
+                        return (
+                          <View key={i}>
+                            <SwitchType
+                              item={item}
+                              isFocussed={(val: any) => {
+                                setIsFocussed(val);
+                              }}
+                              tabIndex={i + 1}
+                              props={props}
+                            />
+                            {/* <Paragraph>{item.description}</Paragraph>
                           <TextInput
                             onChangeText={props.handleChange(item.name)}
                             onBlur={props.handleBlur(item.name)}
                             value={props.values[item.name]}
                           /> */}
-                        </View>
-                      );
-                    })}
-                  </ScrollView>
-                </Card.Content>
-              </Card>
-              {/* <Button
+                          </View>
+                        );
+                      })}
+                    </ScrollView>
+                  </Card.Content>
+                </Card>
+                {/* <Button
                   color="primary"
                   style={submitButtonStyle}
                   type="submit"
@@ -318,22 +330,23 @@ function ItemList({
               >
                   Submit
               </Button> */}
-              <Footer
-                hidden={isFocussed}
-                verbs={
-                  typeof mtText === 'object' && mtText.__verbs
-                    ? (mtText as MtText).__verbs
-                    : []
-                }
-                messageAction={dispatch}
-                token={token}
-                tokenAction={tokenAction}
-              />
-            </>
-          );
-        }}
-      </Formik>
-    </>
+                <Footer
+                  hidden={isFocussed}
+                  verbs={
+                    typeof mtText === 'object' && mtText.__verbs
+                      ? (mtText as MtText).__verbs
+                      : []
+                  }
+                  messageAction={dispatch}
+                  token={token}
+                  tokenAction={tokenAction}
+                />
+              </>
+            );
+          }}
+        </Formik>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -354,6 +367,11 @@ const FormItemsList: React.FC<{
 };
 
 const styles = StyleSheet.create({
+  keyboardContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
   buttonFullWidth: {
     width: '100%',
   },

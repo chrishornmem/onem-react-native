@@ -153,6 +153,7 @@ const SwitchType: React.FC<{
           isOfTypeTextContentType(item.name) ? item.name : undefined
         }
         maxLength={item.max_length || undefined}
+        returnKeyType="done"
       />
       <HelperText type="error" visible={props.errors[item.name] !== ''}>
         {props.errors[item.name]}

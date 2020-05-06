@@ -2,8 +2,10 @@ import React from 'react';
 
 import {
   View,
-  // Text,
+  KeyboardAvoidingView,
   FlatList,
+  Keyboard,
+  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -99,11 +101,6 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
       <Paragraph>
         {item.description ? item.description.replace('\n', '\n\n') : ''}
       </Paragraph>
-
-      {/* <View style={styles.container}> */}
-      {/* <Container style={styles.infoContainer}> */}
-      {/* Phone input with native-base */}
-      {/* phone section  */}
       <View style={styles.infoContainer}>
         {/* country flag */}
         <TouchableWithoutFeedback
@@ -146,7 +143,7 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
       </View>
       <HelperText type="error">{error}</HelperText>
 
-        <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <Portal>
           <Modal
             contentContainerStyle={[
@@ -193,8 +190,8 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
               Close
             </Button>
           </Modal>
-          </Portal>
-        </View>
+        </Portal>
+      </View>
     </>
   );
 };
@@ -202,6 +199,10 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  inner: {
+    flex: 1,
+    justifyContent: 'space-around',
   },
   modalContainer: {
     padding: 20,
