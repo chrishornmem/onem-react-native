@@ -107,7 +107,6 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
       <View style={styles.inputContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            console.log('clicked');
             setShowModal(true);
           }}
         >
