@@ -228,14 +228,14 @@ function ItemList({
             yupObj[item.name].push([
               'yup.min',
               item.min_length,
-              item.min_length_error || 'Minimum length is' + item.min_length,
+              item.min_length_error || 'Minimum length is ' + item.min_length,
             ]);
           }
           if (item.max_length) {
             yupObj[item.name].push([
               'yup.max',
               item.max_length,
-              item.max_length_error || 'Maximum length is' + item.max_length,
+              item.max_length_error || 'Maximum length is ' + item.max_length,
             ]);
           }
           break;

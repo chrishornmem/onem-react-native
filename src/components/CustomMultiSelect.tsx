@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Paragraph, useTheme } from 'react-native-paper';
-import MultiSelect from 'react-native-multiple-select';
 import { FormItem } from '../react-client-shared/utils/Message';
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 
@@ -9,10 +8,11 @@ const CustomMultiSelect = (props: { formikProps: any; item: FormItem }) => {
   const { formikProps, item } = props;
   const [selectedItems, setSelectedItems] = React.useState([]); // should also use item.default
   const [options, contentItems] = makeSelectOptions(item.body);
-
   const multiSelect = React.useRef();
-
   const theme = useTheme();
+  const ITEM_HEIGHT = 45;
+  const MIN_ITEMS_IN_VIEW = 3;
+  const MAX_ITEMS_IN_VIEW = 9;
 
   function makeSelectOptions(body: any) {
     let options: any = [];
@@ -43,25 +43,8 @@ const CustomMultiSelect = (props: { formikProps: any; item: FormItem }) => {
       {contentItems.map((item: any, i: number) => (
         <Paragraph key={i}> {item} </Paragraph>
       ))}
-      {/* <MultiSelect
-        items={options}
-        styleMainWrapper={{ backgroundColor: theme.colors.surface }}
-        onSelectedItemsChange={handleChange}
-        selectedItems={selectedItems as []}
-        uniqueKey="id"
-        styleInputGroup={{ backgroundColor: theme.colors.surface }}
-        tagRemoveIconColor={theme.colors.accent}
-        tagBorderColor={theme.colors.placeholder}
-        tagTextColor={theme.colors.placeholder}
-        selectedItemTextColor={theme.colors.primary}
-        selectedItemIconColor={theme.colors.primary}
-        itemTextColor={theme.colors.text}
-        styleListContainer={{ backgroundColor: theme.colors.surface }}
-        submitButtonColor={theme.colors.primary}
-        submitButtonText="Done"
-        styleSelectorContainer={{ backgroundColor: theme.colors.surface }}
-      /> */}
       <SectionedMultiSelect
+        modalWithSafeAreaView
         items={options}
         uniqueKey="id"
         ref={multiSelect}
@@ -69,9 +52,39 @@ const CustomMultiSelect = (props: { formikProps: any; item: FormItem }) => {
         selectedItems={selectedItems}
         selectText="Select items"
         displayKey="name"
-        modalWithSafeAreaView
+        colors={{
+          subText: theme.colors.text,
+          text: theme.colors.disabled,
+          itemBackground: theme.colors.surface,
+          subItemBackground: theme.colors.surface,
+          disabled: theme.colors.disabled,
+          primary: theme.colors.primary,
+          success: theme.colors.accent,
+          cancel: theme.colors.error,
+          selectToggleTextColor: theme.colors.text,
+          searchSelectionColor: theme.colors.text,
+          searchPlaceholderTextColor: theme.colors.text,
+        }}
+        styles={{
+          selectedItemText: { color: theme.colors.primary },
+          itemText: { fontWeight: 'normal', fontSize: 17 },
+          container: {
+            maxHeight: ITEM_HEIGHT * MAX_ITEMS_IN_VIEW + 95,
+            minHeight: ITEM_HEIGHT * MIN_ITEMS_IN_VIEW + 95,
+            backgroundColor: theme.colors.surface,
+          },
+          scrollView: {
+            maxHeight: ITEM_HEIGHT * MAX_ITEMS_IN_VIEW + 95,
+            minHeight: ITEM_HEIGHT * MIN_ITEMS_IN_VIEW + 95,
+          },
+          searchBar: {
+            backgroundColor: theme.colors.disabled,
+          },
+          modalWrapper: { backgroundColor: theme.colors.surface },
+          backdrop: { backgroundColor: theme.colors.placeholder },
+          item: { height: ITEM_HEIGHT },
+        }}
       />
-      {/* <View>{multiSelect?.current?.getSelectedItemsExt(selectedItems)}</View> */}
     </View>
   );
 };
