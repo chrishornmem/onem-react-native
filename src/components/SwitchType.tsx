@@ -1,7 +1,7 @@
 import { logger } from '../react-client-shared/utils/Log';
 
-import React, { Suspense } from 'react';
-import { Platform, StyleSheet, KeyboardTypeOptions } from 'react-native';
+import React from 'react';
+import { Platform } from 'react-native';
 import { HelperText, Paragraph, TextInput } from 'react-native-paper';
 import DateSelect from './DateSelect';
 import SingleSelect from './SingleSelect';

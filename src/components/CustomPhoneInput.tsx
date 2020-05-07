@@ -1,20 +1,13 @@
 import React from 'react';
-
+import { isOfTypeAutoCompleteType } from '../react-client-shared/utils';
 import {
   View,
-  KeyboardAvoidingView,
   FlatList,
-  Keyboard,
-  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
 
-import {
-  AsYouType,
-  parsePhoneNumberFromString,
-  ParseError,
-} from 'libphonenumber-js';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 import data from './Countries';
 
@@ -23,7 +16,6 @@ import {
   Modal,
   Paragraph,
   Portal,
-  Provider,
   TextInput,
   Button,
   useTheme,
@@ -35,15 +27,9 @@ import { FormItem } from '../react-client-shared/utils/Message';
 const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
   const { formikProps, item } = props;
   const theme = useTheme();
-  const [selectedCountry, setSelectedCountry] = React.useState({
-    name: 'United Kingdom',
-    flag: '🇬🇧',
-    code: 'GB',
-    dial_code: '+44',
-  });
+  const [selectedCountry, setSelectedCountry] = React.useState(data[0]);
   const [error, setError] = React.useState('');
   const [showModal, setShowModal] = React.useState(false);
-  const [countryData, setCountryData] = React.useState([]);
 
   const handleChange = (value: string) => {
     try {
@@ -55,7 +41,7 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
         phoneNumber?.country &&
         phoneNumber.country !== selectedCountry.code
       ) {
-        const countryObj = countryData.filter(
+        const countryObj = data.filter(
           (obj: { code: string }) => obj.code === phoneNumber.country
         )[0];
         setSelectedCountry(countryObj);
@@ -79,9 +65,8 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
   };
 
   const getCountry = (country: string) => {
-    const countryData = data;
     try {
-      const countryObj = countryData.filter(
+      const countryObj = data.filter(
         (obj: { name: string }) => obj.name === country
       )[0];
       // Set data from user choice of country
@@ -92,17 +77,34 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
     }
   };
 
-  React.useEffect(() => {
-    setCountryData(data);
-  }, []);
+  function Item({ item, borderTopColor }) {
+    return (
+      <TouchableWithoutFeedback onPress={() => getCountry(item.name)}>
+        <View
+          style={[
+            styles.countryStyle,
+            {
+              borderTopColor: borderTopColor,
+            },
+          ]}
+        >
+          <Text style={{ fontSize: 24 }}>{item.flag}</Text>
+          <Text style={{ fontSize: 16, paddingHorizontal: 5 }}>
+            {item.name} ({item.dial_code})
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  }
+
+  const ITEM_HEIGHT = 57;
 
   return (
     <>
       <Paragraph>
         {item.description ? item.description.replace('\n', '\n\n') : ''}
       </Paragraph>
-      <View style={styles.infoContainer}>
-        {/* country flag */}
+      <View style={styles.inputContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
             console.log('clicked');
@@ -131,13 +133,19 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
         </TouchableWithoutFeedback>
         {/* open modal */}
         <TextInput
-          style={styles.input}
+          style={{ flexGrow: 1 }}
           keyboardType={'phone-pad'}
           returnKeyType="done"
           autoCapitalize="none"
           autoCorrect={false}
           secureTextEntry={false}
-          // value={item.default}
+          maxLength={20}
+          textContentType="telephoneNumber"
+          defaultValue={item.default ? String(item.default) : undefined}
+          error={error !== null ? true : false}
+          autoCompleteType={
+            isOfTypeAutoCompleteType(item.name) ? item.name : undefined
+          }
           onChangeText={handleChange}
         />
       </View>
@@ -157,30 +165,15 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
             onDismiss={() => setShowModal(false)}
           >
             <FlatList
-              data={countryData}
-              keyExtractor={(item, index) => index.toString()}
+              data={data}
               renderItem={({ item }) => (
-                <TouchableWithoutFeedback onPress={() => getCountry(item.name)}>
-                  <View
-                    style={[
-                      styles.countryStyle,
-                      {
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        width: '90%',
-                        //    justifyContent: 'space-between',
-                        //     backgroundColor: theme.colors.surface,
-                        borderTopColor: theme.colors.placeholder,
-                      },
-                    ]}
-                  >
-                    <Text style={{ fontSize: 24 }}>{item.flag}</Text>
-                    <Text style={{ fontSize: 16, paddingHorizontal: 5 }}>
-                      {item.name} ({item.dial_code})
-                    </Text>
-                  </View>
-                </TouchableWithoutFeedback>
+                <Item item={item} borderTopColor={theme.colors.placeholder} />
               )}
+              getItemLayout={(data, index) => ({
+                length: ITEM_HEIGHT,
+                offset: ITEM_HEIGHT * index,
+                index,
+              })}
             />
             <Button
               style={{ width: '100%' }}
@@ -197,74 +190,28 @@ const CustomPhoneInput = (props: { formikProps: any; item: FormItem }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'space-around',
-  },
   modalContainer: {
-    padding: 20,
+    //   padding: 20,
     height: '70%',
-    width: '100%',
+    width: '90%',
+    minWidth: '90%',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
     alignSelf: 'center',
   },
-  input: {
-    flex: 1,
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  infoContainer: {
+  inputContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  itemStyle: {
-    marginBottom: 10,
-  },
-  modalStyle: {
-    flex: 1,
-    height: 300,
-  },
-  iconStyle: {
-    color: '#fff',
-    fontSize: 28,
-    // marginLeft: 15,
-  },
-  buttonStyle: {
-    alignItems: 'center',
-    backgroundColor: '#b44666',
-    padding: 14,
-    marginBottom: 10,
-    borderRadius: 3,
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  textStyle: {
-    padding: 5,
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
   countryStyle: {
-    flex: 1,
+    width: 300,
     //    backgroundColor: '#5059ae',
     borderTopWidth: 1,
     padding: 12,
-  },
-  closeButtonStyle: {
-    flex: 1,
-    padding: 12,
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#b44666',
   },
 });
 
