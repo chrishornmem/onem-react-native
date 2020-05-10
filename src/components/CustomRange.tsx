@@ -14,6 +14,21 @@ const CustomRange = (props: { formikProps: any; item: FormItem }) => {
     formikProps.setFieldValue(item.name, value, true);
   };
 
+  const step =
+    typeof item.step === 'string' ? parseFloat(item.step as string) : item.step;
+  const min_value =
+    typeof item.min_value === 'string'
+      ? parseFloat(item.min_value as string)
+      : item.min_value;
+  const max_value =
+    typeof item.max_value === 'string'
+      ? parseFloat(item.max_value as string)
+      : item.max_value;
+  const default_value =
+    typeof item.default === 'string'
+      ? parseFloat(item.default as string)
+      : item.default;
+
   return (
     <>
       <Paragraph>
@@ -22,15 +37,19 @@ const CustomRange = (props: { formikProps: any; item: FormItem }) => {
       <View style={styles.container}>
         <Slider
           style={{ width: 300 }}
-          step={item.step || 1}
-          minimumValue={item.min_value || 0}
-          maximumValue={item.max_value || 100}
-          value={(item.default as number) || 0}
+          step={step || 1}
+          minimumValue={min_value || 0}
+          maximumValue={max_value || 100}
+          value={(default_value as number) || 0}
           onSlidingComplete={handleChange}
         />
         <View style={styles.labels}>
           <Text>{item.min_value || '0'}</Text>
-          <Text>{formikProps.values[item.name] || item.default || 0}</Text>
+          <Text>
+            {String(formikProps.values[item.name]) ||
+              String(item.default) ||
+              '0'}
+          </Text>
           <Text>{item.max_value || '100'}</Text>
         </View>
       </View>
