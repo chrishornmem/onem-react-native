@@ -44,6 +44,15 @@ export const Main = () => {
     return {_id: null};
   };
 
+  // const removeApp = (appId: string) => {
+  //   let a = appData.apps;
+  //   app.current = a.length === 0;
+  //   if (!getApp(app._id)) {
+  //     a.push(app);
+  //     setApps({ apps: a });
+  //   }
+  // };
+
   const getApp = (appId: string) => {
     for (let a of appData.apps) {
       if (a._id === appId) {
@@ -76,6 +85,16 @@ export const Main = () => {
     if (currentApp._id) {
       setCurrentApp(currentApp._id);
     }
+  }
+
+  const removeApp = (id: string) => {
+    const newData = appData.apps;
+    const prevIndex = newData.findIndex(item => item._id === id);
+    if (newData[prevIndex].current && newData.length > 1) {
+      newData[0].current = true;
+    }
+    newData.splice(prevIndex, 1);
+    setAllAppData(newData);
   }
 
   const [rtl] = React.useState<boolean>(I18nManager.isRTL);
@@ -129,6 +148,7 @@ export const Main = () => {
       getCurrentApp: getCurrentApp,
       setCurrentApp: setCurrentApp,
       setAllAppData: setAllAppData,
+      removeApp: removeApp,
     }),
     [appData.apps]
   );

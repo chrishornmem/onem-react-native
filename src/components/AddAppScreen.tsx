@@ -58,10 +58,11 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
 
   return (
     <AddApp
-      apps={apps}
       saveApp={saveApp}
-      clearAppStore={clearAppStore}
       errorText={error}
+      title="Add an app"
+      cancelButton
+      cancelAction={() => navigation.goBack()}
     />
   );
 };

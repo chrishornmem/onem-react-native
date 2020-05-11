@@ -294,7 +294,7 @@ export const RootNavigator = () => {
         <NavigationContainer theme={navigationTheme}>
           <Drawer.Navigator
             drawerContent={props => <DrawerContent {...props} />}
-            gestureHandlerProps={{ activeOffsetX: [-350, 350] }}
+            gestureHandlerProps={{ activeOffsetX: [-250, 250] }}
           >
             <Drawer.Screen name="Home" component={StackNavigator} />
             <Drawer.Screen name="Login" component={LoginScreen} />

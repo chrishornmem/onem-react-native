@@ -6,7 +6,7 @@ import { AddApp } from './AddApp';
 
 export const AddAppInit: React.FC<{}> = ({}) => {
   const [error, setError] = React.useState(null);
-  const { apps, insertApp, clearAppStore } = React.useContext(AppsContext);
+  const { insertApp } = React.useContext(AppsContext);
 
   const saveApp = (appName: string) => {
     setError(null);
@@ -25,11 +25,6 @@ export const AddAppInit: React.FC<{}> = ({}) => {
   };
 
   return (
-    <AddApp
-      apps={apps}
-      saveApp={saveApp}
-      clearAppStore={clearAppStore}
-      errorText={error}
-    />
+    <AddApp title="Add your first app" saveApp={saveApp} errorText={error} />
   );
 };

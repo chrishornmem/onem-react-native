@@ -1,31 +1,24 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import {
-  Button,
-  Modal,
-  Portal,
-  Provider,
-  Surface,
-  Text,
-  TextInput,
-  HelperText,
-} from 'react-native-paper';
-import { App } from '../context/appsContext';
+import { Button, HelperText, Surface, TextInput, Title  } from 'react-native-paper';
 
 export const AddApp = (props: {
-  apps: App[];
   saveApp: any;
-  clearAppStore: any;
+  title: string;
   errorText?: string;
+  cancelAction?: any;
+  cancelButton?: boolean;
 }) => {
-  const [isModalOpen, setModalOpen] = React.useState(false);
   const [error, setError] = React.useState(null);
   const [appName, setAppName] = React.useState(null);
 
-  const { apps, clearAppStore, errorText, saveApp } = props;
-
-  const closeModal = () => setModalOpen(false);
-  const showModal = () => setModalOpen(true);
+  const {
+    errorText,
+    saveApp,
+    title,
+    cancelButton = false,
+    cancelAction = () => {},
+  } = props;
 
   React.useEffect(() => {
     if (errorText) {
@@ -34,44 +27,40 @@ export const AddApp = (props: {
   }, [errorText]);
 
   return (
-    <Provider>
-      <Portal>
-        <View style={styles.container}>
-          <Modal
-            contentContainerStyle={styles.modalContainer}
-            visible={isModalOpen}
-            onDismiss={closeModal}
-          >
-            <Surface style={styles.modalContainer}>
-              <View style={{ width: '100%' }}>
-                <TextInput
-                  label="Provide app name"
-                  value={appName}
-                  onChangeText={name => {
-                    setAppName(name);
-                  }}
-                />
-                <HelperText type="error" visible={error}>
-                  {error}
-                </HelperText>
-                <Button
-                  style={{ alignSelf: 'flex-end', marginTop: 20 }}
-                  onPress={() => {
-                    setAppName(null);
-                    saveApp(appName);
-                  }}
-                >
-                  Submit
-                </Button>
-              </View>
-            </Surface>
-          </Modal>
-          {!isModalOpen && <Text>Apps count:{apps.length}</Text>}
-          {!isModalOpen && <Button onPress={showModal}>Add an app</Button>}
-          {!isModalOpen && <Button onPress={clearAppStore}>Clear store</Button>}
+    <View style={styles.container}>
+      <Surface style={styles.formContainer}>
+        <View style={{ width: '100%' }}>
+          <Title>{title}</Title>
+          <TextInput
+            label="App name"
+            value={appName}
+            onChangeText={name => {
+              setAppName(name?.trim());
+            }}
+          />
+          <HelperText type="error" visible={error}>
+            {error}
+          </HelperText>
+          <View style={styles.buttons}>
+            {cancelButton && (
+              <Button compact mode="outlined" onPress={cancelAction}>
+                Cancel
+              </Button>
+            )}
+            <Button
+              mode="contained"
+              compact
+              onPress={() => {
+                setAppName(null);
+                saveApp(appName);
+              }}
+            >
+              Submit
+            </Button>
+          </View>
         </View>
-      </Portal>
-    </Provider>
+      </Surface>
+    </View>
   );
 };
 
@@ -82,7 +71,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 40,
   },
-  modalContainer: {
+  formContainer: {
     padding: 20,
     height: 200,
     width: '100%',
@@ -90,5 +79,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation: 4,
     alignSelf: 'center',
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
   },
 });
