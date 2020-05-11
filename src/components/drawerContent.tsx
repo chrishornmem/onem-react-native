@@ -34,7 +34,7 @@ type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
 
-  const VERSION = 'v0.1.0';
+  const VERSION = 'v0.1.1';
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();

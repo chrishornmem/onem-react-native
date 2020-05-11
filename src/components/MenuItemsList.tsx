@@ -116,9 +116,18 @@ const SwitchMenuItem: React.FC<{
                 //                 </View>
 
                 <Video
-                  style={{ borderRadius: 5, width: '100%' }}
+                  style={{
+                    //      borderRadius: 5,
+                    width: Dimensions.get('window').width - 32,
+                    height: 300,
+                  }}
                   source={{ uri: item.src }}
-                ></Video>
+                  //shouldPlay
+                  useNativeControls
+                  onError={e => {
+                    console.log(e);
+                  }}
+                />
               )}
             </>
           )}
@@ -188,7 +197,7 @@ const MenuItemsList: React.FC<{
       <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
         <Card.Content style={styles.container}>
           <ScrollView>
-            {mtText && mtText.body
+            {mtText?.body
               ? (mtText.body as MenuItem[]).map((item: MenuItem, i: number) => {
                   return (
                     <View style={styles.item} key={i}>
