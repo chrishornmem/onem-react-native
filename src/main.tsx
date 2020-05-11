@@ -90,11 +90,14 @@ export const Main = () => {
   const removeApp = (id: string) => {
     const newData = appData.apps;
     const prevIndex = newData.findIndex(item => item._id === id);
+    let changeCurrent = false;
     if (newData[prevIndex].current && newData.length > 1) {
-      newData[0].current = true;
+      changeCurrent = true;
     }
     newData.splice(prevIndex, 1);
+    if (changeCurrent) newData[0].current = true;
     setAllAppData(newData);
+    return changeCurrent;
   }
 
   const [rtl] = React.useState<boolean>(I18nManager.isRTL);

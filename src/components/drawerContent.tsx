@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useIsDrawerOpen } from '@react-navigation/drawer';
 import {
   DrawerContentComponentProps,
@@ -9,7 +9,7 @@ import {
   Button,
   Caption,
   Drawer,
-  Icon,
+  IconButton,
   List,
   Subheading,
   Switch,
@@ -33,6 +33,9 @@ import { registerAppByName } from '../react-client-shared/api/register';
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
+
+  const VERSION = 'v0.1.0';
+
   const { navigation, progress } = props;
   const paperTheme = useTheme();
   const { userState, tokenAction } = React.useContext(AuthContext);
@@ -130,32 +133,16 @@ export function DrawerContent(props: Props) {
       <TouchableOpacity
         style={[styles.backRightBtn, styles.backRightBtnRight]}
         onPress={() => {
-          console.log('delete pressed');
-          console.log(data);
-          removeApp(data.item._id);
+          let currentChanged = removeApp(data.item._id);
+          if (currentChanged) {
+            switchService(getCurrentApp()._id)
+          }
         }}
       >
         <Text style={styles.backTextWhite}>Delete</Text>
       </TouchableOpacity>
     </View>
   );
-
-  const onSwipeValueChange = (swipeData: { key: any; value: any }) => {
-    const { key, value } = swipeData;
-    if (value < -Dimensions.get('window').width && !this.animationIsRunning) {
-      this.animationIsRunning = true;
-      Animated.timing(new Animated.Value(1), {
-        toValue: 0,
-        duration: 200,
-      }).start(() => {
-        const newData = [...apps];
-        const prevIndex = apps.findIndex(item => item._id === key);
-        newData.splice(prevIndex, 1);
-        setAllAppData(newData);
-        this.animationIsRunning = false;
-      });
-    }
-  };
 
   React.useEffect(() => {
     if (isDrawerOpen) {
@@ -170,141 +157,155 @@ export function DrawerContent(props: Props) {
   });
 
   return (
-    <DrawerContentScrollView {...props}>
-      <Animated.View
-        //@ts-ignore
-        style={[
-          styles.drawerContent,
-          {
-            backgroundColor: paperTheme.colors.surface,
-            transform: [{ translateX }],
-          },
-        ]}
+    <>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexShrink: 1,
+        }}
       >
-        <View style={styles.userInfoSection}>
-          <TouchableOpacity
-            style={{ marginLeft: 10 }}
-            onPress={() => {
-              navigation.toggleDrawer();
-            }}
-          >
+        <View style={styles.version}>
+          <Text style={{ color: paperTheme.colors.disabled }}>{VERSION}</Text>
+        </View>
+        <IconButton
+          style={styles.close}
+          icon="close"
+          size={28}
+          color={paperTheme.colors.disabled}
+          onPress={() => navigation.toggleDrawer()}
+        />
+      </View>
+      <DrawerContentScrollView style={{ paddingTop: 0 }} {...props}>
+        <Animated.View
+          //@ts-ignore
+          style={[
+            styles.drawerContent,
+            {
+              backgroundColor: paperTheme.colors.surface,
+              transform: [{ translateX }],
+            },
+          ]}
+        >
+          <View style={styles.userInfoSection}>
             <CustomAvatar
               source={userState.picture}
               name={userState.name}
               size={64}
             />
-          </TouchableOpacity>
-          <Subheading style={styles.title}>
-            {userState.name || 'Sign up or login to link your mobile number'}
-          </Subheading>
-          {userState.email && (
-            <Caption style={styles.caption}>{userState.email}</Caption>
-          )}
-          {!userState.is_authenticated && (
-            <View style={styles.row}>
-              <View style={styles.section}>
-                <Button
-                  style={styles.buttonFullWidth}
-                  //   color="blue"
-                  uppercase={false}
-                  accessibilityLabel="Login or Sign up"
-                  mode="contained"
-                  onPress={() =>
-                    navigation.dispatch(
-                      CommonActions.navigate({
-                        name: 'Login',
-                      })
-                    )
-                  }
-                >
-                  Login / Sign Up
-                </Button>
+            <Subheading style={styles.title}>
+              {userState.name || 'Sign up or login to link your mobile number'}
+            </Subheading>
+            {userState.email && (
+              <Caption style={styles.caption}>{userState.email}</Caption>
+            )}
+            {!userState.is_authenticated && (
+              <View style={styles.row}>
+                <View style={styles.section}>
+                  <Button
+                    style={styles.buttonFullWidth}
+                    //   color="blue"
+                    uppercase={false}
+                    accessibilityLabel="Login or Sign up"
+                    mode="contained"
+                    onPress={() =>
+                      navigation.dispatch(
+                        CommonActions.navigate({
+                          name: 'Login',
+                        })
+                      )
+                    }
+                  >
+                    Login / Sign Up
+                  </Button>
+                </View>
               </View>
-            </View>
-          )}
-          {userState.is_authenticated && (
-            <View style={styles.row}>
-              <View style={styles.section}>
-                <Button
-                  style={styles.buttonFullWidth}
-                  //      color="blue"
-                  uppercase={false}
-                  accessibilityLabel="Logout"
-                  mode="contained"
-                  onPress={() => {
-                    tokenAction({
-                      type: 'LOGOUT',
-                    });
-                    messageAction({
-                      type: 'LOGOUT',
-                      payload: null,
-                    });
-                    navigation.closeDrawer();
-                  }}
-                >
-                  Logout
-                </Button>
+            )}
+            {userState.is_authenticated && (
+              <View style={styles.row}>
+                <View style={styles.section}>
+                  <Button
+                    style={styles.buttonFullWidth}
+                    //      color="blue"
+                    uppercase={false}
+                    accessibilityLabel="Logout"
+                    mode="contained"
+                    onPress={() => {
+                      tokenAction({
+                        type: 'LOGOUT',
+                      });
+                      messageAction({
+                        type: 'LOGOUT',
+                        payload: null,
+                      });
+                      navigation.closeDrawer();
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </View>
               </View>
-            </View>
-          )}
-        </View>
-        <Drawer.Section title="Preferences">
-          <TouchableRipple onPress={toggleTheme}>
-            <View style={styles.preference}>
-              <Text>Dark Theme</Text>
-              <View pointerEvents="none">
-                <Switch value={theme === 'dark'} />
-              </View>
-            </View>
-          </TouchableRipple>
-          <TouchableRipple onPress={toggleRTL}>
-            <View style={styles.preference}>
-              <Text>RTL</Text>
-              <View pointerEvents="none">
-                <Switch value={rtl === 'right'} />
-              </View>
-            </View>
-          </TouchableRipple>
-        </Drawer.Section>
-        <Drawer.Section title="Apps">
-          <List.Section style={{ paddingLeft: 0 }}>
-            <SwipeListView
-              data={apps}
-              keyExtractor={item => item._id}
-              renderItem={renderItem}
-              renderHiddenItem={renderHiddenItem}
-              rightOpenValue={-75}
-              disableRightSwipe
-              onRowDidOpen={onRowDidOpen}
-            />
-          </List.Section>
-          <View style={styles.userInfoSection}>
-            <View style={{marginVertical:10}}>
-              <View style={styles.section}>
-                <Button
-                  color="blue"
-                  icon="plus"
-                  compact
-                  labelStyle={{ minWidth: '80%' }}
-                  uppercase={false}
-                  accessibilityLabel="Home"
-                  mode="outlined"
-                  onPress={() => {
-                    navigation.dispatch(
-                      CommonActions.navigate({
-                        name: 'AddApp',
-                      })
-                    );
-                  }}
-                >
-                  Add app
-                </Button>
-              </View>
-            </View>
+            )}
           </View>
-        </Drawer.Section>
-      </Animated.View>
-    </DrawerContentScrollView>
+          <Drawer.Section title="Preferences">
+            <TouchableRipple onPress={toggleTheme}>
+              <View style={styles.preference}>
+                <Text>Dark Theme</Text>
+                <View pointerEvents="none">
+                  <Switch value={theme === 'dark'} />
+                </View>
+              </View>
+            </TouchableRipple>
+            <TouchableRipple onPress={toggleRTL}>
+              <View style={styles.preference}>
+                <Text>RTL</Text>
+                <View pointerEvents="none">
+                  <Switch value={rtl === 'right'} />
+                </View>
+              </View>
+            </TouchableRipple>
+          </Drawer.Section>
+          <Drawer.Section title="Apps">
+            <List.Section style={{ paddingLeft: 0 }}>
+              <SwipeListView
+                data={apps}
+                keyExtractor={item => item._id}
+                renderItem={renderItem}
+                renderHiddenItem={renderHiddenItem}
+                rightOpenValue={-75}
+                disableRightSwipe
+                onRowDidOpen={onRowDidOpen}
+              />
+            </List.Section>
+            <View style={styles.userInfoSection}>
+              <View style={{ marginVertical: 10 }}>
+                <View style={styles.section}>
+                  <Button
+                    color="blue"
+                    icon="plus"
+                    compact
+                    labelStyle={{ minWidth: '80%' }}
+                    uppercase={false}
+                    accessibilityLabel="Home"
+                    mode="outlined"
+                    onPress={() => {
+                      navigation.dispatch(
+                        CommonActions.navigate({
+                          name: 'AddApp',
+                        })
+                      );
+                    }}
+                  >
+                    Add app
+                  </Button>
+                </View>
+              </View>
+            </View>
+          </Drawer.Section>
+        </Animated.View>
+      </DrawerContentScrollView>
+    </>
   );
 }
 
@@ -382,5 +383,19 @@ const styles = StyleSheet.create({
   },
   backTextWhite: {
     color: '#FFF',
+  },
+  version: {
+    // position: 'absolute',
+    // left: 10,
+    // top: 10,
+    fontSize: 8,
+    marginLeft: 10,
+  },
+  close: {
+    // position: 'absolute',
+    // left: 50,
+    // top: 10,
+    //fontSize: 8,
+    //  alignSelf: 'flex-end'
   },
 });

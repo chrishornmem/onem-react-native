@@ -17,7 +17,7 @@ export type AppsContextType = {
   getCurrentApp: () => void;
   setCurrentApp: (appId: string) => void;
   setAllAppData: (all: App[]) => void;
-  removeApp: (appId: string) => void;
+  removeApp: (appId: string) => boolean;
 };
 
 export const AppsContext = React.createContext<AppsContextType>({
@@ -27,5 +27,5 @@ export const AppsContext = React.createContext<AppsContextType>({
   getCurrentApp: () => {},
   setCurrentApp: () => {},
   setAllAppData: () => {},
-  removeApp: () => {},
+  removeApp: () => false,
 });
