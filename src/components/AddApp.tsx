@@ -1,30 +1,33 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, HelperText, Surface, TextInput, Title  } from 'react-native-paper';
+import {
+  Button,
+  HelperText,
+  Surface,
+  TextInput,
+  Title,
+} from 'react-native-paper';
 
 export const AddApp = (props: {
-  saveApp: any;
+  onSubmit: any;
+  value: string;
   title: string;
+  disabled: boolean;
+  onChangeText?: any;
   errorText?: string;
   cancelAction?: any;
   cancelButton?: boolean;
 }) => {
-  const [error, setError] = React.useState(null);
-  const [appName, setAppName] = React.useState(null);
-
   const {
+    disabled,
     errorText,
-    saveApp,
+    onSubmit,
+    value,
+    onChangeText,
     title,
     cancelButton = false,
     cancelAction = () => {},
   } = props;
-
-  React.useEffect(() => {
-    if (errorText) {
-      setError(errorText);
-    }
-  }, [errorText]);
 
   return (
     <View style={styles.container}>
@@ -33,14 +36,10 @@ export const AddApp = (props: {
           <Title>{title}</Title>
           <TextInput
             label="App name"
-            value={appName}
-            onChangeText={name => {
-              setAppName(name?.trim());
-            }}
+            value={value}
+            onChangeText={onChangeText}
           />
-          <HelperText type="error" visible={error}>
-            {error}
-          </HelperText>
+          <HelperText type="error">{errorText}</HelperText>
           <View style={styles.buttons}>
             {cancelButton && (
               <Button compact mode="outlined" onPress={cancelAction}>
@@ -50,10 +49,9 @@ export const AddApp = (props: {
             <Button
               mode="contained"
               compact
-              onPress={() => {
-                setAppName(null);
-                saveApp(appName);
-              }}
+              disabled={disabled}
+              style={!cancelButton ? { width: '100%' } : null}
+              onPress={onSubmit}
             >
               Submit
             </Button>
@@ -83,6 +81,5 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
   },
 });

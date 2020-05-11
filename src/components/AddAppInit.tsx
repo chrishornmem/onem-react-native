@@ -6,6 +6,8 @@ import { AddApp } from './AddApp';
 
 export const AddAppInit: React.FC<{}> = ({}) => {
   const [error, setError] = React.useState(null);
+  const [appName, setAppName] = React.useState(null);
+
   const { insertApp } = React.useContext(AppsContext);
 
   const saveApp = (appName: string) => {
@@ -20,11 +22,21 @@ export const AddAppInit: React.FC<{}> = ({}) => {
       })
       .catch(e => {
         console.log(e);
-        setError(JSON.stringify(e));
+        setError(e);
       });
   };
 
   return (
-    <AddApp title="Add your first app" saveApp={saveApp} errorText={error} />
+    <AddApp
+      value={appName}
+      title="Add your first app"
+      onChangeText={name => {
+        setAppName(name);
+        setError(null);
+      }}
+      disabled={!appName}
+      errorText={error}
+      onSubmit={() => saveApp(appName?.trim())}
+    />
   );
 };

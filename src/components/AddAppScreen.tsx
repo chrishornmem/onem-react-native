@@ -1,5 +1,9 @@
 import React from 'react';
-import { CommonActions, NavigationProp } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  CommonActions,
+  NavigationProp,
+} from '@react-navigation/native';
 
 import { AppsContext } from '../context/appsContext';
 import { registerAppByName } from '../react-client-shared/api/register';
@@ -12,14 +16,16 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
   navigation,
 }) => {
   const [error, setError] = React.useState(null);
+  const [appName, setAppName] = React.useState(null);
+
   const { messageAction } = React.useContext(MessageContext);
 
-  const { apps, insertApp, clearAppStore, setCurrentApp } = React.useContext(
-    AppsContext
-  );
+  const { apps, insertApp, setCurrentApp } = React.useContext(AppsContext);
 
   const saveApp = (appName: string) => {
     setError(null);
+    console.log("calling registerAppByName:");
+    console.log(appName);
     registerAppByName(appName)
       .then(result => {
         if (isEmptyObj(result?.data)) {
@@ -35,7 +41,7 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
       })
       .catch(e => {
         console.log(e);
-        setError(JSON.stringify(e));
+        setError(e);
       });
   };
 
@@ -56,14 +62,25 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
     );
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setError(null);
+    }, [])
+  );
+
   return (
     <AddApp
-      saveApp={saveApp}
+      value={appName}
+      onSubmit={() => saveApp(appName?.trim())}
+      onChangeText={name => {
+        setAppName(name);
+        setError(null);
+      }}
       errorText={error}
       title="Add an app"
       cancelButton
+      disabled={!appName}
       cancelAction={() => navigation.goBack()}
     />
   );
 };
-
