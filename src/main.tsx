@@ -13,6 +13,7 @@ import { AddAppInit } from './components/AddAppInit';
 
 import { PreferencesContext } from './context/preferencesContext';
 import { AppsContext, App } from './context/appsContext';
+import { registerApp } from './react-client-shared/api/register';
 
 import useAsyncStorage from './react-client-shared/hooks/useAsyncStorage';
 
@@ -70,18 +71,21 @@ export const Main = () => {
     setApps({ apps: [] });
   };
 
-  const setAllAppData = (all: App[]) => {
-    console.log("/setAllAppData")
-    const currentApp = getCurrentApp();
-    if (currentApp._id) {
-      setApps({ apps: all });
-      setCurrentApp(currentApp._id);
-    } else if (all.length > 0) {
-      let newData = all;
-      newData[0].current = true;
-      setApps({ apps: newData });
+  const refreshAppsList = async () => {
+    if (appData.apps.length > 0) {
+      const appList = [];
+      appData.apps.map(a => appList.push(a._id));
+      try {
+        const result = await registerApp(appList);
+        for (let a of result.data) {
+          a.webAddIcon = a.webAddIcon.replace(/_/g, '-');
+        }
+        setApps({ apps: result.data });
+      } catch (e) {
+        console.log(e);
+      }
     }
-  }
+  };
 
   const removeApp = (id: string) => {
     let changeCurrent = false;
@@ -93,7 +97,7 @@ export const Main = () => {
       }
       newData.splice(prevIndex, 1);
       if (changeCurrent) newData[0].current = true;
-      setAllAppData(newData);
+      setApps({ apps: newData });
     }
     return changeCurrent;
   }
@@ -148,8 +152,8 @@ export const Main = () => {
       clearAppStore: clearAppStore,
       getCurrentApp: getCurrentApp,
       setCurrentApp: setCurrentApp,
-      setAllAppData: setAllAppData,
       removeApp: removeApp,
+      refreshAppsList: refreshAppsList,
     }),
     [appData.apps]
   );

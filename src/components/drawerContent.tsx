@@ -28,12 +28,10 @@ import { CustomAvatar } from './CustomAvatar';
 import { AppIcon } from './AppIcon';
 import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
-import { registerApp } from '../react-client-shared/api/register';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
-
   const VERSION = 'v0.2.0POC';
 
   const { navigation, progress } = props;
@@ -44,7 +42,7 @@ export function DrawerContent(props: Props) {
     apps,
     getCurrentApp,
     setCurrentApp,
-    setAllAppData,
+    refreshAppsList,
     removeApp,
   } = React.useContext(AppsContext);
   const isDrawerOpen = useIsDrawerOpen();
@@ -87,24 +85,6 @@ export function DrawerContent(props: Props) {
     );
   };
 
-  const refreshAppsList = async () => {
-    if (apps.length > 0) {
-      const appList = [];
-      apps.map(a => appList.push(a._id));
-      try {
-        const result = await registerApp(appList);
-        console.log("/refreshAppsList")
-        console.log(result.data)
-        for (let a of result.data) {
-          a.webAddIcon = a.webAddIcon.replace(/_/g, '-');
-        }
-        setAllAppData(result.data);
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  };
-
   const renderItem = (data: { item: App }) => (
     <TouchableRipple
       key={data.item._id}
@@ -139,7 +119,7 @@ export function DrawerContent(props: Props) {
         onPress={() => {
           let currentChanged = removeApp(data.item._id);
           if (currentChanged) {
-            switchService(getCurrentApp()._id)
+            switchService(getCurrentApp()._id);
           }
         }}
       >
@@ -154,7 +134,6 @@ export function DrawerContent(props: Props) {
       refreshAppsList();
     }
   }, [isDrawerOpen]);
-
 
   const translateX = Animated.interpolate(progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
