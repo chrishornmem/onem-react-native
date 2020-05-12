@@ -14,7 +14,7 @@ export type AppsContextType = {
   apps: App[];
   insertApp: (app: App) => void;
   clearAppStore: () => void;
-  getCurrentApp: () => void;
+  getCurrentApp: () => App;
   setCurrentApp: (appId: string) => void;
   setAllAppData: (all: App[]) => void;
   removeApp: (appId: string) => boolean;

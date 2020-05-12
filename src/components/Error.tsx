@@ -5,6 +5,7 @@ import { getError } from '../react-client-shared/utils/Message';
 import { AppsContext } from '../context/appsContext';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { emitToServer } from '../react-client-shared/utils/Socket';
+import { ErrorRecovery } from './ErrorRecovery';
 
 export const Error: React.FC<{ message: any | string }> = ({ message }) => {
   const [open, setOpen] = React.useState(true);
@@ -36,20 +37,25 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.wrapper}>
-        <Snackbar
-          onDismiss={handleClose}
-          visible={open}
-          action={{
-            label: message?.severity === 'INFO' ? 'retry' : 'ok',
-            onPress: () => {
-              handleClose;
-            },
-          }}
-        >
-          {getError(message).error_text}
-        </Snackbar>
-      </View>
+      {message?.severity?.toUpperCase() === 'WARN' ? (
+        <ErrorRecovery app={getCurrentApp()}/>
+      ) : (
+        <View style={styles.wrapper}>
+          <Snackbar
+            onDismiss={handleClose}
+            visible={open}
+            action={{
+              label:
+                message?.severity?.toUpperCase() === 'INFO' ? 'retry' : 'ok',
+              onPress: () => {
+                handleClose;
+              },
+            }}
+          >
+            {getError(message).error_text}
+          </Snackbar>
+        </View>
+      )}
     </View>
   );
 };

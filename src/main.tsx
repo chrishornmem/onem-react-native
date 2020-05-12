@@ -44,15 +44,6 @@ export const Main = () => {
     return {_id: null};
   };
 
-  // const removeApp = (appId: string) => {
-  //   let a = appData.apps;
-  //   app.current = a.length === 0;
-  //   if (!getApp(app._id)) {
-  //     a.push(app);
-  //     setApps({ apps: a });
-  //   }
-  // };
-
   const getApp = (appId: string) => {
     for (let a of appData.apps) {
       if (a._id === appId) {
@@ -80,23 +71,30 @@ export const Main = () => {
   };
 
   const setAllAppData = (all: App[]) => {
+    console.log("/setAllAppData")
     const currentApp = getCurrentApp();
-    setApps({ apps: all });
     if (currentApp._id) {
+      setApps({ apps: all });
       setCurrentApp(currentApp._id);
+    } else if (all.length > 0) {
+      let newData = all;
+      newData[0].current = true;
+      setApps({ apps: newData });
     }
   }
 
   const removeApp = (id: string) => {
+    let changeCurrent = false;
     const newData = appData.apps;
     const prevIndex = newData.findIndex(item => item._id === id);
-    let changeCurrent = false;
-    if (newData[prevIndex].current && newData.length > 1) {
-      changeCurrent = true;
+    if (prevIndex !== -1) {
+      if (newData[prevIndex]?.current && newData.length > 1) {
+        changeCurrent = true;
+      }
+      newData.splice(prevIndex, 1);
+      if (changeCurrent) newData[0].current = true;
+      setAllAppData(newData);
     }
-    newData.splice(prevIndex, 1);
-    if (changeCurrent) newData[0].current = true;
-    setAllAppData(newData);
     return changeCurrent;
   }
 

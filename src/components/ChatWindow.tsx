@@ -17,6 +17,7 @@ export const ChatWindow: React.FC<{}> = ({}) => {
   
   return (
     <>
+    {console.log(messageState.message)}
       <View style={styles.mainWrapper}>
         {messageState.requesting && (
           <View style={[styles.horizontal]}>

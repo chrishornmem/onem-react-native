@@ -28,13 +28,13 @@ import { CustomAvatar } from './CustomAvatar';
 import { AppIcon } from './AppIcon';
 import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
-import { registerAppByName } from '../react-client-shared/api/register';
+import { registerApp } from '../react-client-shared/api/register';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
 
-  const VERSION = 'v0.1.1';
+  const VERSION = 'v0.2.0POC';
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();
@@ -90,14 +90,18 @@ export function DrawerContent(props: Props) {
   const refreshAppsList = async () => {
     if (apps.length > 0) {
       const appList = [];
-      apps.map(a => appList.push(a.name));
+      apps.map(a => appList.push(a._id));
       try {
-        const result = await registerAppByName(appList);
+        const result = await registerApp(appList);
+        console.log("/refreshAppsList")
+        console.log(result.data)
         for (let a of result.data) {
           a.webAddIcon = a.webAddIcon.replace(/_/g, '-');
         }
         setAllAppData(result.data);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e)
+      }
     }
   };
 
@@ -146,10 +150,11 @@ export function DrawerContent(props: Props) {
 
   React.useEffect(() => {
     if (isDrawerOpen) {
-      refreshAppsList();
       closeAllOpenRows();
+      refreshAppsList();
     }
   }, [isDrawerOpen]);
+
 
   const translateX = Animated.interpolate(progress, {
     inputRange: [0, 0.5, 0.7, 0.8, 1],
