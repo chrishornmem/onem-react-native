@@ -5,8 +5,7 @@ import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 
-export const ErrorRecovery: React.FC<{ app: App }> = ({ app }) => {
-  console.log('error recovery');
+export const ErrorRecovery: React.FC<{ app: App, message: any | string }> = ({ app, message }) => {
 
   const theme = useTheme();
   const { getCurrentApp, removeApp } = React.useContext(AppsContext);
@@ -25,6 +24,7 @@ export const ErrorRecovery: React.FC<{ app: App }> = ({ app }) => {
 
   return (
     <View style={styles.container}>
+      {/* <Paragraph>{JSON.stringify(message?.severity)}</Paragraph> */}
       <Paragraph>We detected a problem with the following app:</Paragraph>
       <Subheading style={[styles.appName, { color: theme.colors.error }]}>
         {app?.name?.toUpperCase() || 'Unknown'}

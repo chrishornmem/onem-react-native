@@ -25,16 +25,23 @@ export const Main = () => {
 
   const [appData, setApps, hydrated] = useAsyncStorage('apps', {
     apps: [],
+    initialized: false,
   });
 
-  const insertApp = (app: App) => {
+  const insertApp = (app: App, initialized: boolean = true) => {
     let a = appData.apps;
     app.current = a.length === 0;
     if (!getApp(app._id)) {
+      app.webAddIcon = app.webAddIcon.replace(/_/g, '-');
       a.push(app);
-      setApps({ apps: a });
+      setApps({ apps: a, initialized: initialized });
     }
   };
+
+  const setInitialized = () => {
+    let a = appData.apps;
+    setApps({ apps: a, initialized: true });
+  }
 
   const getCurrentApp = () => {
     for (let a of appData.apps) {
@@ -55,6 +62,7 @@ export const Main = () => {
   };
 
   const setCurrentApp = (appId: string) => {
+
     let appsTemp = appData.apps;
     for (let a of appsTemp) {
       if (a._id === appId) {
@@ -63,15 +71,16 @@ export const Main = () => {
         a.current = false;
       }
     }
-    setApps({ apps: appsTemp });
+    setApps({ apps: appsTemp, initialized: true });
     return true;
   };
 
   const clearAppStore = () => {
-    setApps({ apps: [] });
+    setApps({ apps: [], initialized: false });
   };
 
   const refreshAppsList = async () => {
+    let changeCurrent = false;
     if (appData.apps.length > 0) {
       const appList = [];
       appData.apps.map(a => appList.push(a._id));
@@ -80,7 +89,17 @@ export const Main = () => {
         for (let a of result.data) {
           a.webAddIcon = a.webAddIcon.replace(/_/g, '-');
         }
-        setApps({ apps: result.data });
+        const newData = result.data;
+        const currentAppId = getCurrentApp()?._id;
+        const prevIndex = newData.findIndex(item => item._id === currentAppId);
+        if (prevIndex !== -1) {
+          newData[prevIndex].current = true;
+        } else if (newData.length > 0) {
+          newData[0].current = true;
+          changeCurrent = true;
+        }
+        setApps({ apps: newData, initialized: true });
+        return changeCurrent;
       } catch (e) {
         console.log(e);
       }
@@ -97,7 +116,7 @@ export const Main = () => {
       }
       newData.splice(prevIndex, 1);
       if (changeCurrent) newData[0].current = true;
-      setApps({ apps: newData });
+      setApps({ apps: newData, initialized: true });
     }
     return changeCurrent;
   }
@@ -123,31 +142,11 @@ export const Main = () => {
     [rtl, theme, toggleRTL]
   );
 
-  //const componentIsMounted = React.useRef(true);
-
-  // React.useEffect(() => {
-  //   storage
-  //     .get('apps')
-  //     .then((appList: string) => {
-  //       if (componentIsMounted.current && appList) {
-  //         setApps(JSON.parse(appList));
-  //       } else {
-  //         setApps([]);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       if (componentIsMounted.current) {
-  //         setApps([]);
-  //       }
-  //     });
-  //   return function cleanUp() {
-  //     componentIsMounted.current = false;
-  //   };
-  // }, []);
-
   const appsContext = React.useMemo(
     () => ({
       apps: appData.apps,
+      initialized: appData.initialized,
+      setInitialized: setInitialized,
       insertApp: insertApp,
       clearAppStore: clearAppStore,
       getCurrentApp: getCurrentApp,
@@ -155,7 +154,7 @@ export const Main = () => {
       removeApp: removeApp,
       refreshAppsList: refreshAppsList,
     }),
-    [appData.apps]
+    [appData.apps, appData.initialized]
   );
 
   return (

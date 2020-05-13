@@ -48,7 +48,6 @@ const DateSelect = (props: { formikProps: any; item: FormItem }) => {
           onChange={handleChange}
         />
       )}
-      <Paragraph>{JSON.stringify(show)}</Paragraph>
     </>
   );
 };

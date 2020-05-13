@@ -37,8 +37,8 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
 
   return (
     <View style={styles.container}>
-      {message?.severity?.toUpperCase() === 'WARN' ? (
-        <ErrorRecovery app={getCurrentApp()}/>
+      {message?.severity?.toUpperCase() !== 'INFO' ? (
+        <ErrorRecovery message={message} app={getCurrentApp()}/>
       ) : (
         <View style={styles.wrapper}>
           <Snackbar

@@ -3,18 +3,16 @@ import { Video } from 'expo-av';
 
 import {
   Dimensions,
-  Image,
+  ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { ScrollView } from 'react-native';
 
 import { Button, Caption, Card, Paragraph, useTheme } from 'react-native-paper';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 
 import { MtText, MenuItem } from '../react-client-shared/utils/Message';
-import { User } from '../react-client-shared/reducers/userState';
 import { isVideoUrl } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 
@@ -58,15 +56,23 @@ const SwitchMenuItem: React.FC<{
           ) : (
             <>
               {!isVideoUrl(item.src) ? (
-                <TouchableOpacity onPress={() => clicked(index)}>
+                <View style={styles.imageOptionContainer}>
                   <ResponsiveImage
                     width={Dimensions.get('window').width - 32}
                     style={{ borderRadius: 5 }}
                     uri={item.src}
                     // resizeMode="contain"
                   />
-                  <Caption>{item.description}</Caption>
-                </TouchableOpacity>
+                  <Button
+                    mode="contained"
+                    onPress={() => clicked(index)}
+                    uppercase={false}
+                    contentStyle={{ alignSelf: 'flex-start' }}
+                    style={[styles.caption, styles.captionButton]}
+                  >
+                    {item.description}
+                  </Button>
+                </View>
               ) : (
                 <>
                   <Video
@@ -82,9 +88,15 @@ const SwitchMenuItem: React.FC<{
                       console.log(e);
                     }}
                   />
-                  <TouchableOpacity onPress={() => clicked(index)}>
-                    <Caption>{item.description}</Caption>
-                  </TouchableOpacity>
+                  <Button
+                    style={[styles.captionButton]}
+                    mode="contained"
+                    uppercase={false}
+                    onPress={() => clicked(index)}
+                    contentStyle={{ alignSelf: 'flex-start' }}
+                  >
+                    {item.description}
+                  </Button>
                 </>
               )}
             </>
@@ -138,9 +150,9 @@ const SwitchMenuItem: React.FC<{
       return (
         <Button
           style={styles.buttonFullWidth}
-          color="blue"
+          color={theme.colors.primary}
           uppercase={false}
-          accessibilityLabel="Login or Sign up"
+          accessibilityLabel="Login or Signup"
           mode="contained"
           onPress={() =>
             navigation.dispatch(
@@ -150,7 +162,7 @@ const SwitchMenuItem: React.FC<{
             )
           }
         >
-          Login / Sign Up
+          Login/Signup
         </Button>
       );
 
@@ -158,7 +170,7 @@ const SwitchMenuItem: React.FC<{
       return (
         <Button
           style={styles.buttonFullWidth}
-          color="blue"
+          color={theme.colors.error}
           uppercase={false}
           accessibilityLabel="Logout"
           mode="contained"
@@ -246,5 +258,18 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  imageOptionContainer: {
+    flex: 1,
+    width: '100%',
+    //  justifyContent: 'center',
+  },
+  caption: {
+    position: 'absolute',
+    bottom: 0,
+  },
+  captionButton: {
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });

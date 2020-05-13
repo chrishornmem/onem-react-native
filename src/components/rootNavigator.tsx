@@ -15,7 +15,7 @@ import usePersistedReducer from '../react-client-shared/hooks/usePersistedReduce
 import usePersistedAsyncReducer from '../react-client-shared/hooks/usePersistedAsyncReducer';
 import { makeKeyFromPrefix } from '../react-client-shared/utils';
 
-let initialized = false;
+let ready = false;
 
 import { createSocket, disconnect } from '../react-client-shared/utils/Socket';
 import {
@@ -65,7 +65,9 @@ export const RootNavigator = () => {
   );
   const [userState, setUserState] = React.useState({} as User);
   //const [userState, setUserState] = usePersistedAsyncState('user', {} as User)
-  const { getCurrentApp } = React.useContext(AppsContext);
+  const { getCurrentApp, setInitialized, initialized } = React.useContext(
+    AppsContext
+  );
 
   function registerEvents(s: any) {
     s.on('connect', function() {
@@ -74,7 +76,8 @@ export const RootNavigator = () => {
         type: 'CONNECTED',
         payload: null,
       });
-      if (tokenState.loggingIn) {
+      if (tokenState.loggingIn || !initialized) {
+        setInitialized();
         emitToServer({
           action_type: 'serviceSwitch',
           app_id: getCurrentApp()._id,
@@ -235,8 +238,8 @@ export const RootNavigator = () => {
       }
     };
 
-    if (!initialized) {
-      initialized = true;
+    if (!ready) {
+      ready = true;
       tokenAction({
         type: 'CLEAR_REFRESH',
       });

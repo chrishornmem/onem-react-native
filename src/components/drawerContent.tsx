@@ -32,7 +32,7 @@ import { emitToServer } from '../react-client-shared/utils/Socket';
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
-  const VERSION = 'v0.2.0POC';
+  const VERSION = 'v0.3.5';
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();
@@ -131,7 +131,17 @@ export function DrawerContent(props: Props) {
   React.useEffect(() => {
     if (isDrawerOpen) {
       closeAllOpenRows();
-      refreshAppsList();
+      // eslint-disable-next-line promise/prefer-await-to-then
+      refreshAppsList()
+        .then((currentChanged: boolean) => {
+          if (currentChanged && apps.length > 0) {
+            switchService(getCurrentApp()._id);
+          }
+          return true;
+        })
+        .catch((e: any) => {
+          console.log(e);
+        });
     }
   }, [isDrawerOpen]);
 
@@ -241,14 +251,14 @@ export function DrawerContent(props: Props) {
                 </View>
               </View>
             </TouchableRipple>
-            <TouchableRipple onPress={toggleRTL}>
+            {/* <TouchableRipple onPress={toggleRTL}>
               <View style={styles.preference}>
                 <Text>RTL</Text>
                 <View pointerEvents="none">
                   <Switch value={rtl === 'right'} />
                 </View>
               </View>
-            </TouchableRipple>
+            </TouchableRipple> */}
           </Drawer.Section>
           <Drawer.Section title="Apps">
             <List.Section style={{ paddingLeft: 0 }}>

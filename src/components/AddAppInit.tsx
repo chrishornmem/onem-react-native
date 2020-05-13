@@ -21,14 +21,15 @@ export const AddAppInit: React.FC<{}> = ({}) => {
     registerAppByName(appName)
       .then(result => {
         if (isEmptyObj(result?.data)) {
-          throw 'Invalid app name';
+          throw { message: 'App not found' };
         }
         const app = { ...result.data };
-        return insertApp(app);
+        insertApp(app, false);
       })
       .catch(e => {
-        console.log(e);
-        return setError(e);
+        let message =
+          e?.message || 'Error communicating with server, check network';
+        return setError(message);
       })
       .finally(() => {
         if (componentIsMounted.current) setRequesting(false);
@@ -79,4 +80,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-

@@ -31,7 +31,7 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
     registerAppByName(appName)
       .then(result => {
         if (isEmptyObj(result?.data)) {
-          throw 'Invalid app name';
+          throw { message: 'App not found' };
         }
         const app = { ...result.data };
         const prevAppsLength = apps.length;
@@ -42,8 +42,9 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
         }
       })
       .catch(e => {
-        console.log(e);
-        setError(e);
+        let message =
+          e?.message || 'Error communicating with server, check network';
+        return setError(message);
       })
       .finally(() => setRequesting(false));
   };
