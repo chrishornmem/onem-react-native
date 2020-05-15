@@ -32,7 +32,7 @@ import { emitToServer } from '../react-client-shared/utils/Socket';
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
-  const VERSION = 'v0.3.5';
+  const VERSION = 'v0.3.6';
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();

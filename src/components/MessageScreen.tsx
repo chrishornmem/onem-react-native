@@ -2,31 +2,27 @@ import React, { Suspense } from 'react';
 
 import { Message, isForm, MtText } from '../react-client-shared/utils/Message';
 import { User } from '../react-client-shared/reducers/userState';
+import { MessageContext } from '../react-client-shared/reducers/messageState';
 
 export const MessageScreen: React.FC<{
-  message: Message;
-  messageAction: any;
   token: string;
   tokenAction: any;
-}> = ({ message, messageAction, token, tokenAction }) => {
+}> = ({ token, tokenAction }) => {
   const MenuItemsList = React.lazy(() => import('./MenuItemsList'));
   const FormItemsList = React.lazy(() => import('./FormItemsList'));
+  
+  const { messageState, messageAction, isRequesting } = React.useContext(
+    MessageContext
+  );
+
+  const { message } = messageState; 
+
   return (
     <Suspense fallback={<></>}>
       {isForm(message) ? (
-        <FormItemsList
-          dispatch={messageAction}
-          mtText={message.mtText as MtText}
-          token={token}
-          tokenAction={tokenAction}
-        />
+        <FormItemsList token={token} tokenAction={tokenAction} />
       ) : (
-        <MenuItemsList
-          mtText={message.mtText as MtText}
-          dispatch={messageAction}
-          token={token}
-          tokenAction={tokenAction}
-        />
+        <MenuItemsList token={token} tokenAction={tokenAction} />
       )}
     </Suspense>
   );

@@ -2,20 +2,23 @@ import React, { Suspense } from 'react';
 import { Video } from 'expo-av';
 
 import {
+  ActivityIndicator,
   Dimensions,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native';
 
-import { Button, Caption, Card, Paragraph, useTheme } from 'react-native-paper';
+import { MessageContext } from '../react-client-shared/reducers/messageState';
+
+import { Button, Card, Paragraph, useTheme } from 'react-native-paper';
 import { CommonActions, useNavigation } from '@react-navigation/native';
 
 import { MtText, MenuItem } from '../react-client-shared/utils/Message';
 import { isVideoUrl } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 
+import { Loader } from './Loader';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ResponsiveImage } from './ResponsiveImage';
@@ -26,7 +29,8 @@ const SwitchMenuItem: React.FC<{
   tokenAction: any;
   dispatch: any;
   index: number;
-}> = ({ item, token, tokenAction, dispatch, index }) => {
+  setIsLoading: any;
+}> = ({ item, token, tokenAction, dispatch, index, setIsLoading }) => {
   const theme = useTheme();
   const navigation = useNavigation();
 
@@ -34,6 +38,7 @@ const SwitchMenuItem: React.FC<{
     dispatch({
       type: 'REQUESTING',
     });
+    setIsLoading(true);
     emitToServer({ action_type: 'menuOptionSelected', option_index: index });
   };
 
@@ -194,17 +199,24 @@ const SwitchMenuItem: React.FC<{
 };
 
 const MenuItemsList: React.FC<{
-  mtText: MtText;
-  dispatch: any;
   token: string;
   tokenAction: any;
-}> = ({ mtText, dispatch, token, tokenAction }) => {
+}> = ({ token, tokenAction }) => {
+  const { messageState, messageAction, isRequesting } = React.useContext(
+    MessageContext
+  );
+
+  const { message } = messageState; 
+  const { mtText } = message;
+
+  const [isLoading, setIsLoading] = React.useState(false);
+
   return (
     <>
       <Header
         title={mtText.header}
         leftHidden={mtText.__is_root}
-        dispatch={dispatch}
+        dispatch={messageAction}
       />
       <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
         <Card.Content style={styles.container}>
@@ -216,9 +228,10 @@ const MenuItemsList: React.FC<{
                       <SwitchMenuItem
                         token={token}
                         tokenAction={tokenAction}
-                        dispatch={dispatch}
+                        dispatch={messageAction}
                         item={item}
                         index={i}
+                        setIsLoading={setIsLoading}
                       />
                     </View>
                   );
@@ -233,10 +246,11 @@ const MenuItemsList: React.FC<{
             ? (mtText as MtText).__verbs
             : []
         }
-        messageAction={dispatch}
+        messageAction={messageAction}
         token={token}
         tokenAction={tokenAction}
       />
+      {isLoading && <Loader />}
     </>
   );
 };
@@ -271,5 +285,14 @@ const styles = StyleSheet.create({
   captionButton: {
     width: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

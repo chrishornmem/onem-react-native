@@ -2,6 +2,7 @@ import { logger } from '../react-client-shared/utils/Log';
 
 import React, { Suspense } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   View,
@@ -17,11 +18,12 @@ import { Formik, Form } from 'formik';
 import { transformAll } from '@overgear/yup-ast';
 
 import { MtText, FormItem } from '../react-client-shared/utils/Message';
-import { User } from '../react-client-shared/reducers/userState';
 import { toArrayOrNumber } from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { MessageContext } from '../react-client-shared/reducers/messageState';
+import { Loader } from './Loader';
 
 const SwitchType = React.lazy(() => import('./SwitchType'));
 
@@ -52,7 +54,6 @@ function ItemList({
   };
 
   const handleReset = (resetFn: any) => {
-    logger.info('/handleReset:');
     resetFn(); // formik reset form
     //  resetForm(); // clear persistent storage
   };
@@ -261,6 +262,7 @@ function ItemList({
       ? mtText.header
       : 'Complete the form';
   const [isFocussed, setIsFocussed] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   return (
     <KeyboardAvoidingView
@@ -287,6 +289,7 @@ function ItemList({
                   dispatch={dispatch}
                   leftVariant="cancel"
                   handleLeftClick={() => {
+                    setIsLoading(true);
                     handleReset(props.resetForm);
                   }}
                   rightVariant="submit"
@@ -294,7 +297,10 @@ function ItemList({
                   rightDisabled={
                     disableSubmitButton && (!props.dirty || !props.isValid)
                   }
-                  handleSubmit={props.handleSubmit}
+                  handleSubmit={() => {
+                    setIsLoading(true);
+                    props.handleSubmit();
+                  }}
                 />
                 <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
                   <Card.Content style={styles.container}>
@@ -341,6 +347,7 @@ function ItemList({
                   token={token}
                   tokenAction={tokenAction}
                 />
+                {isLoading && <Loader />}
               </>
             );
           }}
@@ -351,14 +358,19 @@ function ItemList({
 }
 
 const FormItemsList: React.FC<{
-  mtText: MtText;
-  dispatch: any;
   token: string;
   tokenAction: any;
-}> = ({ mtText, dispatch, token, tokenAction }) => {
+}> = ({ token, tokenAction }) => {
+  const { messageState, messageAction, isRequesting } = React.useContext(
+    MessageContext
+  );
+
+  const { message } = messageState;
+  const mtText = message.mtText;
+
   return (
     <ItemList
-      dispatch={dispatch}
+      dispatch={messageAction}
       mtText={mtText}
       token={token}
       tokenAction={tokenAction}
@@ -385,6 +397,15 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

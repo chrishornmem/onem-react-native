@@ -61,6 +61,9 @@ export const Header = (props: {
   };
 
   const handleBack = () => {
+    if (typeof handleLeftClick == 'function') {
+      handleLeftClick()
+    }
     if (backEmitProps) {
       dispatch({
         type: 'REQUESTING',

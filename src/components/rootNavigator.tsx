@@ -285,11 +285,15 @@ export const RootNavigator = () => {
       setUserState(getUserProfile(tokenState.token));
     }
     return { tokenState, tokenAction, userState };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenState]);
+
+  const formattedMessage = JSON.stringify(messageState?.message);
 
   const messageContext = React.useMemo(() => {
     return { messageState, messageAction };
-  }, [messageState]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formattedMessage]);
 
   return (
     <AuthContext.Provider value={authContext}>

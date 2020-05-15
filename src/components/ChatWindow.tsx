@@ -10,36 +10,28 @@ import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 
 export const ChatWindow: React.FC<{}> = ({}) => {
-  const { tokenState, tokenAction }  = React.useContext(AuthContext);
-  const { messageState, messageAction } = React.useContext(MessageContext);
+  const { tokenState, tokenAction } = React.useContext(AuthContext);
 
   const token = tokenState?.token;
+  const { messageState, messageAction, isRequesting } = React.useContext(
+    MessageContext
+  );
   
   return (
     <>
       <View style={styles.mainWrapper}>
-        {messageState.requesting && (
-          <View style={[styles.horizontal]}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
         {messageState.hasError ? (
           <Error message={messageState.message} />
         ) : (
-          <View style={styles.container}>
-            {!messageState.requesting &&
-            !tokenState.loggingIn &&
-            !tokenState.loggingOut &&
-            messageState.message &&
-            messageState.message.mtText ? (
-              <MessageScreen
-                message={messageState.message}
-                messageAction={messageAction}
-                token={token}
-                tokenAction={tokenAction}
-              />
-            ) : null}
-          </View>
+          <>
+            {!tokenState.loggingIn &&
+              !tokenState.loggingOut &&
+              messageState.message && (
+                <View style={styles.container}>
+                  <MessageScreen token={token} tokenAction={tokenAction} />
+                </View>
+              )}
+          </>
         )}
       </View>
     </>
