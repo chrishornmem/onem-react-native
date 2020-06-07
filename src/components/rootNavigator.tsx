@@ -11,9 +11,7 @@ import { DrawerContent } from './drawerContent';
 import { LoginScreen } from './LoginScreen';
 import { AddAppScreen } from './AddAppScreen';
 
-import usePersistedReducer from '../react-client-shared/hooks/usePersistedReducer';
 import usePersistedAsyncReducer from '../react-client-shared/hooks/usePersistedAsyncReducer';
-import { makeKeyFromPrefix } from '../react-client-shared/utils';
 
 let ready = false;
 
@@ -32,26 +30,31 @@ import {
   tokenReducer,
   initialTokenState,
 } from '../react-client-shared/reducers/tokenState';
-
+import {
+  ConnectionContext,
+  socketReducer,
+  initialConnectionState,
+} from '../react-client-shared/reducers/socket';
 import { AppsContext } from '../context/appsContext';
 
 import { User } from '../react-client-shared/reducers/userState';
 
-import { socketReducer } from '../react-client-shared/reducers/socket';
 import { Message } from '../react-client-shared/utils/Message';
 import { Storage, STORAGE } from '../react-client-shared/utils/Storage';
 import { getUserProfile } from '../react-client-shared/api/userProfile';
-import { emitToServer } from '../react-client-shared/utils/Socket';
+import { emitToServer, unRegisterEvents } from '../react-client-shared/utils/Socket';
 
 const Drawer = createDrawerNavigator();
 
 export const RootNavigator = () => {
+  const componentIsMounted = React.useRef(true);
   const theme = useTheme();
   const storage = new Storage(STORAGE.ASYNC);
   const navigationTheme = theme.dark ? DarkTheme : DefaultTheme;
-  const [connectState, connectAction] = React.useReducer(socketReducer, {
-    connectStatus: 'start',
-  });
+  const [connectState, connectAction] = React.useReducer(
+    socketReducer,
+    initialConnectionState
+  );
   const [tokenState, tokenAction] = usePersistedAsyncReducer(
     'token',
     tokenReducer,
@@ -59,7 +62,7 @@ export const RootNavigator = () => {
     // STORAGE.ASYNC
   );
   const [messageState, messageAction] = React.useReducer(
-  //  'chatWindow',
+    //  'chatWindow',
     messageReducer,
     initialMessageState
   );
@@ -117,7 +120,7 @@ export const RootNavigator = () => {
         logger.error(reason);
         // the disconnection was initiated by the server, you need to reconnect manually
 
-        if (reason === 'transport close' || reason === 'io server disconnect') {
+        if (reason === 'io server disconnect') {
           logger.error('disconected by server');
           if (tokenState.token) {
             // assume there's an issue with the token since there's no way to get feedback
@@ -132,11 +135,11 @@ export const RootNavigator = () => {
             // const s: any = createSocket(tokenState.token);
             // registerEvents(s);
           }
-          connectAction({
-            type: 'CONNECTING',
-            payload: null,
-          });
         }
+        connectAction({
+          type: 'CONNECTING',
+          payload: null,
+        });
       })
       .on('MESSAGE RECEIVED', function(data: Message) {
         logger.info('MESSAGE RECEIVED:');
@@ -188,6 +191,13 @@ export const RootNavigator = () => {
       payload: null,
     });
   }
+
+  React.useEffect(() => {
+    return function cleanUp() {
+      unRegisterEvents();
+      componentIsMounted.current = false;
+    };
+  },[])
 
   React.useEffect(() => {
     const getToken = async () => {
@@ -285,29 +295,36 @@ export const RootNavigator = () => {
       setUserState(getUserProfile(tokenState.token));
     }
     return { tokenState, tokenAction, userState };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenState]);
 
   const formattedMessage = JSON.stringify(messageState?.message);
 
   const messageContext = React.useMemo(() => {
     return { messageState, messageAction };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formattedMessage]);
+
+  const connectionContext = React.useMemo(() => {
+    return { connectState };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectState.connectStatus]);
 
   return (
     <AuthContext.Provider value={authContext}>
       <MessageContext.Provider value={messageContext}>
-        <NavigationContainer theme={navigationTheme}>
-          <Drawer.Navigator
-            drawerContent={props => <DrawerContent {...props} />}
-            gestureHandlerProps={{ activeOffsetX: [-250, 250] }}
-          >
-            <Drawer.Screen name="Home" component={StackNavigator} />
-            <Drawer.Screen name="Login" component={LoginScreen} />
-            <Drawer.Screen name="AddApp" component={AddAppScreen} />
-          </Drawer.Navigator>
-        </NavigationContainer>
+        <ConnectionContext.Provider value={connectionContext}>
+          <NavigationContainer theme={navigationTheme}>
+            <Drawer.Navigator
+              drawerContent={props => <DrawerContent {...props} />}
+              gestureHandlerProps={{ activeOffsetX: [-250, 250] }}
+            >
+              <Drawer.Screen name="Home" component={StackNavigator} />
+              <Drawer.Screen name="Login" component={LoginScreen} />
+              <Drawer.Screen name="AddApp" component={AddAppScreen} />
+            </Drawer.Navigator>
+          </NavigationContainer>
+        </ConnectionContext.Provider>
       </MessageContext.Provider>
     </AuthContext.Provider>
   );

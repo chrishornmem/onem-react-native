@@ -1,15 +1,24 @@
 {
   "expo": {
     "name": "ONEm",
-    "slug": "ONEm",
+    "slug": "onem",
     "scheme": "onem",
     "privacy": "public",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
+    "android": {
+      "package": "com.onem.onem",
+      "versionCode": 1,
+      "permissions": []
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.onem.onem",
+      "buildNumber": "1.0.0"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -17,15 +26,13 @@
       "resizeMode": "cover",
       "backgroundColor": "#ff0000"
     },
+    "primaryColor": "#ffffff",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "description": "v0.3.4"
+    "description": "ONEm micro-app"
   }
 }

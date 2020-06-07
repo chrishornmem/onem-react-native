@@ -27,9 +27,10 @@ export const AddAppInit: React.FC<{}> = ({}) => {
         insertApp(app, false);
       })
       .catch(e => {
+        console.log(e);
         let message =
           e?.message || 'Error communicating with server, check network';
-        return setError(message);
+        setError(message);
       })
       .finally(() => {
         if (componentIsMounted.current) setRequesting(false);

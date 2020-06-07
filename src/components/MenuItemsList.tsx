@@ -21,6 +21,7 @@ import { emitToServer } from '../react-client-shared/utils/Socket';
 import { Loader } from './Loader';
 import { Header } from './Header';
 import { Footer } from './Footer';
+import { CustomCardItem } from './CustomCardItem';
 import { ResponsiveImage } from './ResponsiveImage';
 
 const SwitchMenuItem: React.FC<{
@@ -34,6 +35,9 @@ const SwitchMenuItem: React.FC<{
   const theme = useTheme();
   const navigation = useNavigation();
 
+  const [isVideo, isInternetVideo] = isVideoUrl(item?.src);
+
+
   const clicked = (i: Number) => {
     dispatch({
       type: 'REQUESTING',
@@ -42,11 +46,30 @@ const SwitchMenuItem: React.FC<{
     emitToServer({ action_type: 'menuOptionSelected', option_index: index });
   };
 
+  const cardActionClicked = (i: Number) => {
+    dispatch({
+      type: 'REQUESTING',
+    });
+    setIsLoading(true);
+    emitToServer({
+      action_type: 'cardActionSelected',
+      body_index: index,
+      action_index: i,
+    });
+  };
+
   switch (item.type) {
     case 'option':
       return (
         <>
-          {item.description && !item.src ? (
+          {item.card && (
+            <CustomCardItem
+              item={item.card}
+              onCardSelected={() => clicked(index)}
+              onCardActionSelected={cardActionClicked}
+            />
+          )}
+          {!item.card && item.description && !item.src ? (
             <>
               <Button
                 style={styles.buttonFullWidth}
@@ -60,7 +83,7 @@ const SwitchMenuItem: React.FC<{
             </>
           ) : (
             <>
-              {!isVideoUrl(item.src) ? (
+              {item.src && !isVideo ? (
                 <View style={styles.imageOptionContainer}>
                   <ResponsiveImage
                     width={Dimensions.get('window').width - 32}
@@ -80,28 +103,32 @@ const SwitchMenuItem: React.FC<{
                 </View>
               ) : (
                 <>
-                  <Video
-                    style={{
-                      //      borderRadius: 5,
-                      width: Dimensions.get('window').width - 32,
-                      height: 300,
-                    }}
-                    source={{ uri: item.src }}
-                    //shouldPlay
-                    useNativeControls
-                    onError={e => {
-                      console.log(e);
-                    }}
-                  />
-                  <Button
-                    style={[styles.captionButton]}
-                    mode="contained"
-                    uppercase={false}
-                    onPress={() => clicked(index)}
-                    contentStyle={{ alignSelf: 'flex-start' }}
-                  >
-                    {item.description}
-                  </Button>
+                  {item.src && (
+                    <Video
+                      style={{
+                        //      borderRadius: 5,
+                        width: Dimensions.get('window').width - 32,
+                        height: 300,
+                      }}
+                      source={{ uri: item.src }}
+                      //shouldPlay
+                      useNativeControls
+                      onError={e => {
+                        console.log(e);
+                      }}
+                    />
+                  )}
+                  {item.description && (
+                    <Button
+                      style={[styles.captionButton]}
+                      mode="contained"
+                      uppercase={false}
+                      onPress={() => clicked(index)}
+                      contentStyle={{ alignSelf: 'flex-start' }}
+                    >
+                      {item.description}
+                    </Button>
+                  )}
                 </>
               )}
             </>
@@ -112,11 +139,18 @@ const SwitchMenuItem: React.FC<{
     case 'content':
       return (
         <>
-          {item.description && !item.src ? (
+          {item.card && (
+            <CustomCardItem
+              item={item.card}
+              onCardActionSelected={cardActionClicked}
+              disabled
+            />
+          )}
+          {!item.card && item.description && !item.src ? (
             <Paragraph>{item.description}</Paragraph>
           ) : (
             <>
-              {!isVideoUrl(item.src) ? (
+              {item.src && !isVideo ? (
                 <View style={{ paddingRight: 16 }}>
                   <ResponsiveImage
                     width={Dimensions.get('window').width - 32}
@@ -125,26 +159,23 @@ const SwitchMenuItem: React.FC<{
                   />
                 </View>
               ) : (
-                //                 <View>
-                //                   <Image
-                // //                    style={{ borderRadius: 5, width: '100%', height: 100, resizeMode: 'cover' }}
-                //                     source={{ uri: item.src }}
-                //                   />
-                //                 </View>
-
-                <Video
-                  style={{
-                    //      borderRadius: 5,
-                    width: Dimensions.get('window').width - 32,
-                    height: 300,
-                  }}
-                  source={{ uri: item.src }}
-                  //shouldPlay
-                  useNativeControls
-                  onError={e => {
-                    console.log(e);
-                  }}
-                />
+                <>
+                  {item.src && (
+                    <Video
+                      style={{
+                        //      borderRadius: 5,
+                        width: Dimensions.get('window').width - 32,
+                        height: 300,
+                      }}
+                      source={{ uri: item.src }}
+                      //shouldPlay
+                      useNativeControls
+                      onError={e => {
+                        console.log(e);
+                      }}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
@@ -206,7 +237,7 @@ const MenuItemsList: React.FC<{
     MessageContext
   );
 
-  const { message } = messageState; 
+  const { message } = messageState;
   const { mtText } = message;
 
   const [isLoading, setIsLoading] = React.useState(false);
@@ -217,6 +248,9 @@ const MenuItemsList: React.FC<{
         title={mtText.header}
         leftHidden={mtText.__is_root}
         dispatch={messageAction}
+        handleHomeClick={() => {
+          setIsLoading(true);
+        }}
       />
       <Card style={[styles.cardWrapper, { paddingBottom: 50 }]}>
         <Card.Content style={styles.container}>

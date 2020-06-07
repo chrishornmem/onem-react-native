@@ -1,14 +1,24 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Portal } from 'react-native-paper';
 
 export const Loader = (props: {}) => {
   const { ...rest } = props;
 
   return (
-    <View style={styles.loading}>
-      <ActivityIndicator {...rest} size="large" />
-    </View>
+    <>
+      {Platform.OS == 'android' ? (
+        <Portal>
+          <View style={styles.loading}>
+            <ActivityIndicator {...rest} size="large" />
+          </View>
+        </Portal>
+      ) : (
+        <View style={styles.loading}>
+          <ActivityIndicator {...rest} size="large" />
+        </View>
+      )}
+    </>
   );
 };
 

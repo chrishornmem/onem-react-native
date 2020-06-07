@@ -16,6 +16,7 @@ export const Header = (props: {
   leftDisabled?: boolean;
   leftHidden?: boolean;
   handleSubmit?: any;
+  handleHomeClick?: any;
   handleLeftClick?: any;
 }) => {
   const theme = useTheme();
@@ -25,6 +26,7 @@ export const Header = (props: {
     title,
     dispatch,
     handleSubmit = null,
+    handleHomeClick = null,
     handleLeftClick = null,
     rightDisabled = false,
     leftDisabled = false,
@@ -39,7 +41,7 @@ export const Header = (props: {
     ? props.rightVariant.toLowerCase()
     : 'home';
 
-    const insets = useSafeArea();
+  const insets = useSafeArea();
 
   const backEmitProps = {
     action_type: ONEM_ACTION.SYSTEM_VERB_SELECTED,
@@ -52,24 +54,23 @@ export const Header = (props: {
   };
 
   const handleHome = () => {
-    if (homeEmitProps) {
-      dispatch({
-        type: 'REQUESTING',
-      });
-      emitToServer(homeEmitProps);
+    if (typeof handleHomeClick == 'function') {
+      handleHomeClick();
     }
+    dispatch({
+      type: 'REQUESTING',
+    });
+    emitToServer(homeEmitProps);
   };
 
   const handleBack = () => {
     if (typeof handleLeftClick == 'function') {
-      handleLeftClick()
+      handleLeftClick();
     }
-    if (backEmitProps) {
-      dispatch({
-        type: 'REQUESTING',
-      });
-      emitToServer(backEmitProps);
-    }
+    dispatch({
+      type: 'REQUESTING',
+    });
+    emitToServer(backEmitProps);
   };
 
   return (

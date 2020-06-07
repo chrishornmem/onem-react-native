@@ -288,6 +288,10 @@ function ItemList({
                   title={formHeader}
                   dispatch={dispatch}
                   leftVariant="cancel"
+                  handleHomeClick={() => {
+                    setIsLoading(true);
+                    handleReset(props.resetForm);
+                  }}
                   handleLeftClick={() => {
                     setIsLoading(true);
                     handleReset(props.resetForm);

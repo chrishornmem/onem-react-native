@@ -28,11 +28,12 @@ import { CustomAvatar } from './CustomAvatar';
 import { AppIcon } from './AppIcon';
 import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
+import Constants from 'expo-constants';
 
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
-  const VERSION = 'v0.3.6';
+  const VERSION = Constants.nativeBuildVersion;
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();

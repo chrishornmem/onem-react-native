@@ -44,7 +44,7 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
       .catch(e => {
         let message =
           e?.message || 'Error communicating with server, check network';
-        return setError(message);
+        setError(message);
       })
       .finally(() => setRequesting(false));
   };
