@@ -84,7 +84,11 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
   return (
     <Portal>
       {!application_error ? (
-        <ErrorRecovery message={message} app={getCurrentApp()} />
+        <ErrorRecovery
+          message={message}
+          messageAction={messageAction}
+          app={getCurrentApp()}
+        />
       ) : (
         <Snackbar
           style={[{ bottom: 45 }, errorStyles[severity]]}

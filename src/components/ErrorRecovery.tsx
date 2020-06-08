@@ -5,12 +5,17 @@ import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 
-export const ErrorRecovery: React.FC<{ app: App, message: any | string }> = ({ app, message }) => {
-
+export const ErrorRecovery: React.FC<{
+  app: App;
+  message: any | string;
+  messageAction: any;
+}> = ({ app, message, messageAction }) => {
   const theme = useTheme();
   const { getCurrentApp, removeApp } = React.useContext(AppsContext);
-  const { messageAction } = React.useContext(MessageContext);
-
+  console.log('messageContext:');
+  console.log(MessageContext);
+  //const { messageAction } = React.useContext(MessageContext);
+  console.log('messageAction:' + typeof messageAction);
   const switchService = (appId: string) => {
     emitToServer({
       action_type: 'serviceSwitch',
@@ -36,7 +41,7 @@ export const ErrorRecovery: React.FC<{ app: App, message: any | string }> = ({ a
         onPress={() => {
           let currentChanged = removeApp(app._id);
           if (currentChanged) {
-            switchService(getCurrentApp()._id)
+            switchService(getCurrentApp()._id);
           }
         }}
         style={styles.resetButton}

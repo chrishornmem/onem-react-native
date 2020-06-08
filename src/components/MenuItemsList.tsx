@@ -23,6 +23,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { CustomCardItem } from './CustomCardItem';
 import { ResponsiveImage } from './ResponsiveImage';
+import { Media } from './Media';
 
 const SwitchMenuItem: React.FC<{
   item: MenuItem;
@@ -36,7 +37,6 @@ const SwitchMenuItem: React.FC<{
   const navigation = useNavigation();
 
   const [isVideo, isInternetVideo] = isVideoUrl(item?.src);
-
 
   const clicked = (i: Number) => {
     dispatch({
@@ -102,25 +102,11 @@ const SwitchMenuItem: React.FC<{
                   </Button>
                 </View>
               ) : (
-                <>
-                  {item.src && (
-                    <Video
-                      style={{
-                        //      borderRadius: 5,
-                        width: Dimensions.get('window').width - 32,
-                        height: 300,
-                      }}
-                      source={{ uri: item.src }}
-                      //shouldPlay
-                      useNativeControls
-                      onError={e => {
-                        console.log(e);
-                      }}
-                    />
-                  )}
+                <View style={styles.imageOptionContainer}>
+                  {item.src && <Media src={item.src} />}
                   {item.description && (
                     <Button
-                      style={[styles.captionButton]}
+                      style={[styles.caption, styles.captionButton]}
                       mode="contained"
                       uppercase={false}
                       onPress={() => clicked(index)}
@@ -129,7 +115,7 @@ const SwitchMenuItem: React.FC<{
                       {item.description}
                     </Button>
                   )}
-                </>
+                </View>
               )}
             </>
           )}
@@ -146,39 +132,10 @@ const SwitchMenuItem: React.FC<{
               disabled
             />
           )}
-          {!item.card && item.description && !item.src ? (
+          {!item.card && item.description && !item.src && (
             <Paragraph>{item.description}</Paragraph>
-          ) : (
-            <>
-              {item.src && !isVideo ? (
-                <View style={{ paddingRight: 16 }}>
-                  <ResponsiveImage
-                    width={Dimensions.get('window').width - 32}
-                    uri={item.src}
-                    style={{ borderRadius: 5 }}
-                  />
-                </View>
-              ) : (
-                <>
-                  {item.src && (
-                    <Video
-                      style={{
-                        //      borderRadius: 5,
-                        width: Dimensions.get('window').width - 32,
-                        height: 300,
-                      }}
-                      source={{ uri: item.src }}
-                      //shouldPlay
-                      useNativeControls
-                      onError={e => {
-                        console.log(e);
-                      }}
-                    />
-                  )}
-                </>
-              )}
-            </>
           )}
+          {!item.card && item.src && <Media src={item.src} />}
         </>
       );
 
