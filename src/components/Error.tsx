@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { Portal, Snackbar, useTheme } from 'react-native-paper';
 import { getError } from '../react-client-shared/utils/Message';
 import { AppsContext } from '../context/appsContext';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
@@ -11,52 +11,97 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
   const [open, setOpen] = React.useState(true);
   const { getCurrentApp } = React.useContext(AppsContext);
   const { messageAction } = React.useContext(MessageContext);
+  const theme = useTheme();
+
+  const { application_error, error_text, severity } = getError(message);
+  const mtText: MtText =
+    typeof message === 'object'
+      ? (message.mtText as MtText)
+      : {
+          __is_root: false,
+          snackbar: {
+            message: error_text,
+            severity: severity,
+            meta: {
+              auto_hide_duration: null,
+              overlay: false,
+            },
+          },
+        };
+  const auto_hide_duration =
+    mtText?.snackbar?.meta?.auto_hide_duration === null
+      ? 7000
+      : mtText?.snackbar?.meta?.auto_hide_duration;
 
   const handleClose = () => {
     setOpen(false);
-    if (typeof message !== 'string' && message.severity === 'INFO') {
+    if (!application_error && severity === 'info') {
+      messageAction({
+        type: 'REQUESTING',
+      });
       emitToServer({
         action_type: 'refreshContext',
         app_id: getCurrentApp()._id,
       });
+    } else if (!application_error && severity !== 'info ') {
       messageAction({
-        type: 'REFRESH',
-        payload: null,
+        type: 'REQUESTING',
       });
-    } else {
       emitToServer({
         action_type: 'serviceSwitch',
         app_id: getCurrentApp()._id,
       });
+    }
+  };
+
+  const handleAction = () => {
+    if (mtText?.snackbar?.name) {
       messageAction({
         type: 'REQUESTING',
-        payload: null,
+      });
+      emitToServer({
+        action_type: 'snackbarAction',
+        name: mtText?.snackbar?.name,
       });
     }
   };
 
+  const errorStyles = {
+    success: {
+      backgroundColor: 'green',
+    },
+    error: {
+      backgroundColor: theme.colors.error,
+    },
+    info: {
+      backgroundColor: theme.colors.primary,
+    },
+    warn: {
+      backgroundColor: theme.colors.accent,
+    },
+  };
+
   return (
-    <View style={styles.container}>
-      {message?.severity?.toUpperCase() !== 'INFO' ? (
-        <ErrorRecovery message={message} app={getCurrentApp()}/>
+    <Portal>
+      {!application_error ? (
+        <ErrorRecovery message={message} app={getCurrentApp()} />
       ) : (
-        <View style={styles.wrapper}>
-          <Snackbar
-            onDismiss={handleClose}
-            visible={open}
-            action={{
-              label:
-                message?.severity?.toUpperCase() === 'INFO' ? 'retry' : 'ok',
-              onPress: () => {
-                handleClose;
-              },
-            }}
-          >
-            {getError(message).error_text}
-          </Snackbar>
-        </View>
+        <Snackbar
+          style={[{ bottom: 45 }, errorStyles[severity]]}
+          onDismiss={handleClose}
+          duration={auto_hide_duration}
+          visible={open}
+          action={{
+            label: application_error ? mtText?.snackbar?.name : null,
+            onPress: () => {
+              handleAction();
+            },
+          }}
+        >
+          {error_text}
+        </Snackbar>
       )}
-    </View>
+    </Portal>
   );
 };
 

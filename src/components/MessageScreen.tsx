@@ -10,12 +10,12 @@ export const MessageScreen: React.FC<{
 }> = ({ token, tokenAction }) => {
   const MenuItemsList = React.lazy(() => import('./MenuItemsList'));
   const FormItemsList = React.lazy(() => import('./FormItemsList'));
-  
+
   const { messageState, messageAction, isRequesting } = React.useContext(
     MessageContext
   );
 
-  const { message } = messageState; 
+  const { message } = messageState;
 
   return (
     <Suspense fallback={<></>}>

@@ -33,19 +33,14 @@ export const ChatWindow: React.FC<{}> = ({}) => {
               </Snackbar>
             </View>
           )}
-        {messageState.hasError ? (
-          <Error message={messageState.message} />
-        ) : (
-          <>
-            {!tokenState.loggingIn &&
-              !tokenState.loggingOut &&
-              messageState.message && (
-                <View style={styles.container}>
-                  <MessageScreen token={token} tokenAction={tokenAction} />
-                </View>
-              )}
-          </>
-        )}
+        <View style={styles.container}>
+          {messageState.hasError && <Error message={messageState.message} />}
+          {!tokenState.loggingIn &&
+          !tokenState.loggingOut &&
+          messageState.message ? (
+            <MessageScreen token={token} tokenAction={tokenAction} />
+          ) : null}
+        </View>
       </View>
     </>
   );
@@ -71,7 +66,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     position: 'absolute',
-    top: 50,
+    top: 45,
     left: 0,
     right: 0,
     height: 50,
