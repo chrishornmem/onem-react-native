@@ -36,7 +36,6 @@ export const ErrorRecovery: React.FC<{
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
-        console.log("back pressed");
         return true;
       }
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
