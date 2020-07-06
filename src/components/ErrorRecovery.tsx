@@ -9,13 +9,14 @@ export const ErrorRecovery: React.FC<{
   app: App;
   message: any | string;
   messageAction: any;
-}> = ({ app, message, messageAction }) => {
+  onPress: any;
+}> = ({ app, message, messageAction, onPress }) => {
   const theme = useTheme();
   const { getCurrentApp, removeApp } = React.useContext(AppsContext);
-  console.log('messageContext:');
-  console.log(MessageContext);
+  //console.log('messageContext:');
+  //console.log(MessageContext);
   //const { messageAction } = React.useContext(MessageContext);
-  console.log('messageAction:' + typeof messageAction);
+  //console.log('messageAction:' + typeof messageAction);
   const switchService = (appId: string) => {
     emitToServer({
       action_type: 'serviceSwitch',
@@ -38,12 +39,7 @@ export const ErrorRecovery: React.FC<{
         You will need to remove the app from the configuration.
       </Paragraph>
       <Button
-        onPress={() => {
-          let currentChanged = removeApp(app._id);
-          if (currentChanged) {
-            switchService(getCurrentApp()._id);
-          }
-        }}
+        onPress={() => onPress()}
         style={styles.resetButton}
         mode="contained"
       >

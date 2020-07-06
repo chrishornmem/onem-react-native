@@ -33,7 +33,7 @@ import Constants from 'expo-constants';
 type Props = DrawerContentComponentProps<DrawerNavigationProp>;
 
 export function DrawerContent(props: Props) {
-  const VERSION = Constants.nativeBuildVersion;
+  const VERSION = Constants.nativeApplicationVersion;
 
   const { navigation, progress } = props;
   const paperTheme = useTheme();
@@ -172,7 +172,10 @@ export function DrawerContent(props: Props) {
           onPress={() => navigation.toggleDrawer()}
         />
       </View>
-      <DrawerContentScrollView style={{ paddingTop: 0 }} {...props}>
+      <DrawerContentScrollView
+        contentContainerStyle={{ paddingTop: 0 }}
+        {...props}
+      >
         <Animated.View
           //@ts-ignore
           style={[

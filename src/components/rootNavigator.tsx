@@ -36,13 +36,17 @@ import {
   initialConnectionState,
 } from '../react-client-shared/reducers/socket';
 import { AppsContext } from '../context/appsContext';
+import { LoaderContext } from '../context/loaderContext';
 
 import { User } from '../react-client-shared/reducers/userState';
 
 import { Message } from '../react-client-shared/utils/Message';
 import { Storage, STORAGE } from '../react-client-shared/utils/Storage';
 import { getUserProfile } from '../react-client-shared/api/userProfile';
-import { emitToServer, unRegisterEvents } from '../react-client-shared/utils/Socket';
+import {
+  emitToServer,
+  unRegisterEvents,
+} from '../react-client-shared/utils/Socket';
 
 const Drawer = createDrawerNavigator();
 
@@ -71,6 +75,8 @@ export const RootNavigator = () => {
   const { getCurrentApp, setInitialized, initialized } = React.useContext(
     AppsContext
   );
+
+  const { isLoading } = React.useContext(LoaderContext);
 
   function registerEvents(s: any) {
     s.on('connect', function() {
@@ -197,7 +203,7 @@ export const RootNavigator = () => {
       unRegisterEvents();
       componentIsMounted.current = false;
     };
-  },[])
+  }, []);
 
   React.useEffect(() => {
     const getToken = async () => {
@@ -309,6 +315,11 @@ export const RootNavigator = () => {
     return { connectState };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectState.connectStatus]);
+
+  const loaderContext = React.useMemo(() => {
+    return { isLoading: messageState.requesting };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageState.requesting]);
 
   return (
     <AuthContext.Provider value={authContext}>

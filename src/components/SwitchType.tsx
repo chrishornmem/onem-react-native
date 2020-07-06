@@ -150,7 +150,9 @@ const SwitchType: React.FC<{
         defaultValue={props.values[item.name]}
         keyboardType={isOfTypeKeyboardTypeOptions(type) ? type : 'default'}
         textContentType={
-          isOfTypeTextContentType(item.name) ? item.name : undefined
+          isOfTypeTextContentType(item.name)
+            ? item.name.toLowerCase()
+            : undefined
         }
         maxLength={item.max_length || undefined}
         returnKeyType="done"

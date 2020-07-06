@@ -3,13 +3,14 @@ import { ActivityIndicator, Image, StyleProp } from 'react-native';
 // import { Image } from 'react-native-elements';
 
 export const ResponsiveImage: React.FC<{
+  uri: string;
   width?: number;
   height?: number;
-  uri: string;
-  style: StyleProp<T>;
-}> = ({ width, height, uri, style }) => {
+  style?: StyleProp<T>;
+}> = ({ uri, width, height, style }) => {
   const [widthVal, setWidthVal] = React.useState(width);
   const [heightVal, setHeightVal] = React.useState(height);
+  const modUri = uri + '?' + new Date().toString();
 
   const componentIsMounted = React.useRef(true);
 
@@ -24,9 +25,9 @@ export const ResponsiveImage: React.FC<{
       uri,
       (w: number, h: number) => {
         if (componentIsMounted.current) {
-          if (widthVal && !heightVal) {
+          if (width && h && !height) {
             setHeightVal(h * (widthVal / w));
-          } else if (!widthVal && heightVal) {
+          } else if (!width && w && height) {
             setWidthVal(w * (heightVal / h));
           }
         }
@@ -41,14 +42,16 @@ export const ResponsiveImage: React.FC<{
         }
       }
     );
-  }, [heightVal, uri, widthVal]);
+  }, [width, height, heightVal, uri, widthVal]);
 
   return (
     <>
       {(!heightVal || !widthVal) && <ActivityIndicator />}
       {heightVal && widthVal && uri ? (
         <Image
-          source={{ uri: uri }}
+         // key={new Date().toString()}
+         resizeMode='contain'
+          source={{ uri: modUri }}
           style={[{ height: heightVal, width: widthVal }, style]}
         />
       ) : null}

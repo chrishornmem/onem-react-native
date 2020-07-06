@@ -6,11 +6,13 @@ import { Snackbar } from 'react-native-paper';
 
 import { Error } from './Error';
 import { MessageScreen } from './MessageScreen';
+import { Loader } from './Loader';
 
 //import { MessageState } from '../react-client-shared/reducers/messageState';
 import { AuthContext } from '../react-client-shared/reducers/tokenState';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { ConnectionContext } from '../react-client-shared/reducers/socket';
+import { LoaderContext } from '../context/loaderContext';
 
 export const ChatWindow: React.FC<{}> = ({}) => {
   const { tokenState, tokenAction } = React.useContext(AuthContext);
@@ -19,6 +21,8 @@ export const ChatWindow: React.FC<{}> = ({}) => {
   const { messageState, messageAction, isRequesting } = React.useContext(
     MessageContext
   );
+
+  const { isLoading } = React.useContext(LoaderContext);
 
   const { connectState } = React.useContext(ConnectionContext);
 

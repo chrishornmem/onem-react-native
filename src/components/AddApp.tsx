@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import {
   Button,
   HelperText,
@@ -51,7 +51,10 @@ export const AddApp = (props: {
               compact
               disabled={disabled}
               style={!cancelButton ? { width: '100%' } : null}
-              onPress={onSubmit}
+              onPress={() => {
+                Keyboard.dismiss();
+                onSubmit();
+              }}
             >
               Submit
             </Button>

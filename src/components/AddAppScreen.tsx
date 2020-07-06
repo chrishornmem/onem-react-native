@@ -5,7 +5,7 @@ import {
   NavigationProp,
 } from '@react-navigation/native';
 
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, BackHandler, StyleSheet, View } from 'react-native';
 import { Portal } from 'react-native-paper';
 import { AppsContext } from '../context/appsContext';
 import { registerAppByName } from '../react-client-shared/api/register';
@@ -70,6 +70,12 @@ export const AddAppScreen: React.FC<{ navigation: NavigationProp }> = ({
     React.useCallback(() => {
       setError(null);
       setAppName(null);
+      const onBackPress = () => {
+        return true;
+      }
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     }, [])
   );
 

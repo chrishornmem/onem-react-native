@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Portal, Snackbar, useTheme } from 'react-native-paper';
-import { getError } from '../react-client-shared/utils/Message';
+import { getError, MtText } from '../react-client-shared/utils/Message';
 import { AppsContext } from '../context/appsContext';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { emitToServer } from '../react-client-shared/utils/Socket';
@@ -9,12 +9,18 @@ import { ErrorRecovery } from './ErrorRecovery';
 
 export const Error: React.FC<{ message: any | string }> = ({ message }) => {
   const [open, setOpen] = React.useState(true);
-  const { getCurrentApp } = React.useContext(AppsContext);
+  const { getCurrentApp, removeApp } = React.useContext(AppsContext);
   const { messageAction } = React.useContext(MessageContext);
+
+  const curApp = getCurrentApp();
+
   const theme = useTheme();
 
   const { application_error, error_text, severity } = getError(message);
-  const mtText: MtText =
+
+  const [switchingService, setSwitchingService] = React.useState(false);
+
+  const mtText: any =
     typeof message === 'object'
       ? (message.mtText as MtText)
       : {
@@ -33,7 +39,7 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
       ? 7000
       : mtText?.snackbar?.meta?.auto_hide_duration;
 
-  const handleClose = () => {
+  const handleSnackbarDismiss = () => {
     setOpen(false);
     if (!application_error && severity === 'info') {
       messageAction({
@@ -54,7 +60,7 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
     }
   };
 
-  const handleAction = () => {
+  const handleSnackbarAction = () => {
     if (mtText?.snackbar?.name) {
       messageAction({
         type: 'REQUESTING',
@@ -62,6 +68,21 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
       emitToServer({
         action_type: 'snackbarAction',
         name: mtText?.snackbar?.name,
+      });
+    }
+  };
+
+  const handleErrorOnPress = () => {
+    const currentChanged = removeApp(curApp._id);
+    if (currentChanged) {
+      setSwitchingService(true);
+      emitToServer({
+        action_type: 'serviceSwitch',
+        app_id: getCurrentApp()._id,
+      });
+      messageAction({
+        type: 'REQUESTING',
+        payload: null,
       });
     }
   };
@@ -82,30 +103,37 @@ export const Error: React.FC<{ message: any | string }> = ({ message }) => {
   };
 
   return (
-    <Portal>
-      {!application_error ? (
+    <>
+      {!application_error && !switchingService ? (
         <ErrorRecovery
           message={message}
           messageAction={messageAction}
-          app={getCurrentApp()}
+          app={curApp}
+          onPress={handleErrorOnPress}
         />
       ) : (
-        <Snackbar
-          style={[{ bottom: 45 }, errorStyles[severity]]}
-          onDismiss={handleClose}
-          duration={auto_hide_duration}
-          visible={open}
-          action={{
-            label: application_error ? mtText?.snackbar?.name : null,
-            onPress: () => {
-              handleAction();
-            },
-          }}
-        >
-          {error_text}
-        </Snackbar>
+        <>
+          {!switchingService && (
+            <Portal>
+              <Snackbar
+                style={[{ bottom: 45 }, errorStyles[severity]]}
+                onDismiss={handleSnackbarDismiss}
+                duration={auto_hide_duration}
+                visible={open}
+                action={{
+                  label: application_error ? mtText?.snackbar?.name : null,
+                  onPress: () => {
+                    handleSnackbarAction();
+                  },
+                }}
+              >
+                {error_text}
+              </Snackbar>
+            </Portal>
+          )}
+        </>
       )}
-    </Portal>
+    </>
   );
 };
 

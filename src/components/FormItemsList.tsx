@@ -18,7 +18,10 @@ import { Formik, Form } from 'formik';
 import { transformAll } from '@overgear/yup-ast';
 
 import { MtText, FormItem } from '../react-client-shared/utils/Message';
-import { toArrayOrNumber } from '../react-client-shared/utils';
+import {
+  toArrayOrNumber,
+  getFirstOptionValue,
+} from '../react-client-shared/utils';
 import { emitToServer } from '../react-client-shared/utils/Socket';
 import { Header } from './Header';
 import { Footer } from './Footer';
@@ -122,13 +125,12 @@ function ItemList({
           if (item.required !== 1) {
             touchedFields.push(item.name);
           }
-        } else if (item.default !== null) {
-          values[item.name] = item.default;
-          // } else {
-          // logger.info("item.body:")
-          // logger.info(item.body);
-          // logger.info("form-menu:" + (item.body.slice(1, 2)[0] as any).value);
-          //   values[item.name] = (item.body.slice(1, 2)[0] as any).value;
+        } else {
+          touchedFields.push(item.name);
+          values[item.name] =
+            item.body.length > 0 && !item.default
+              ? getFirstOptionValue(item.body)
+              : item.default;
         }
       }
     });

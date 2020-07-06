@@ -8,16 +8,16 @@
       "ios",
       "android"
     ],
-    "version": "1.1.0",
+    "version": "1.2.0",
     "android": {
       "package": "com.onem.onem",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": []
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.onem.onem",
-      "buildNumber": "1.1.0"
+      "buildNumber": "1.2.0"
     },
     "orientation": "portrait",
     "icon": "./assets/icon.png",

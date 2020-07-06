@@ -24,6 +24,7 @@ import { Footer } from './Footer';
 import { CustomCardItem } from './CustomCardItem';
 import { ResponsiveImage } from './ResponsiveImage';
 import { Media } from './Media';
+import { LoaderContext } from '../context/loaderContext';
 
 const SwitchMenuItem: React.FC<{
   item: MenuItem;
@@ -198,6 +199,7 @@ const MenuItemsList: React.FC<{
   const { mtText } = message;
 
   const [isLoading, setIsLoading] = React.useState(false);
+  // const { isLoading } = React.useContext(LoaderContext);
 
   return (
     <>
