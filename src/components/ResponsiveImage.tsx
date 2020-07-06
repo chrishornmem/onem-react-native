@@ -10,7 +10,7 @@ export const ResponsiveImage: React.FC<{
 }> = ({ uri, width, height, style }) => {
   const [widthVal, setWidthVal] = React.useState(width);
   const [heightVal, setHeightVal] = React.useState(height);
-  const modUri = uri + '?' + new Date().toString();
+  const modUri = uri + '?__date=' + new Date().getTime().toString();
 
   const componentIsMounted = React.useRef(true);
 

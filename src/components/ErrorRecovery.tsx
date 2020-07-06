@@ -1,5 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+
+import {
+  useFocusEffect,
+} from '@react-navigation/native';
+
+import { BackHandler, StyleSheet, View } from 'react-native';
 import { Paragraph, Subheading, Button, useTheme } from 'react-native-paper';
 import { AppsContext, App } from '../context/appsContext';
 import { emitToServer } from '../react-client-shared/utils/Socket';
@@ -27,6 +32,18 @@ export const ErrorRecovery: React.FC<{
       payload: null,
     });
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        console.log("back pressed");
+        return true;
+      }
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [])
+  );
 
   return (
     <View style={styles.container}>

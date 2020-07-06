@@ -8,7 +8,7 @@
       "ios",
       "android"
     ],
-    "version": "1.2.0",
+    "version": "1.2.2",
     "android": {
       "package": "com.onem.onem",
       "versionCode": 3,
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.onem.onem",
-      "buildNumber": "1.2.0"
+      "buildNumber": "1.2.2"
     },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
