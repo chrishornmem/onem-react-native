@@ -4,6 +4,7 @@ import React from 'react';
 //import color from 'color';
 
 import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 // const CharCounter = ({ ...props }) => {
 //   const { error = false, current = 0, maxLength = 0 } = props;
@@ -43,26 +44,39 @@ const CustomHelperText = ({ ...props }) => {
     maxLength,
     minLength,
     style,
-    theme,
     type,
+    value = '',
     visible = true,
   } = props;
 
+  const theme = useTheme();
+
   const { colors, dark } = theme;
 
-  const textColor =
-    type === 'error'
-      ? 'red'
-      : 'initial';
+  const textColor = type === 'error' ? colors.error : colors.text;
+
+	const counterText = maxLength == null || maxLength === undefined ? 
+			String(value.length) 
+		:
+			value.length + '/' + maxLength;
 
   return (
     <>
       {visible && (
-        <View style={[styles.container, styles.text, style]}>
+        <View
+          style={[
+            styles.container,
+            styles.text,
+            {
+              justifyContent: helperText ? 'space-between' : 'flex-end',
+            },
+            style,
+          ]}
+        >
           <Text style={{ color: textColor }}>{helperText}</Text>
           {charCounter && (minLength || maxLength) && (
             <Text style={{ color: textColor }}>
-              {helperText.length + '/' + maxLength}
+              {counterText}
             </Text>
           )}
         </View>
@@ -82,7 +96,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
   },
-  justifyContent: helperText ? 'space-between' : 'flex-end',
 });
 
 export default CustomHelperText;

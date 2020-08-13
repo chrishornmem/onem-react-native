@@ -16,6 +16,7 @@ export const MessageScreen: React.FC<{
   );
 
   const { message } = messageState;
+  console.log("menu loaded");
 
   return (
     <>

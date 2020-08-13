@@ -161,6 +161,7 @@ const SwitchType: React.FC<{
       <CustomHelperText
         type={props.errors[item.name] ? 'error' : 'info'}
         helperText={props.errors[item.name] || ''}
+        value={props.values[item.name]}
         maxLength={item.max_length}
         minLength={item.min_length}
       />
