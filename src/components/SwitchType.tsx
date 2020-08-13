@@ -1,13 +1,14 @@
 import { logger } from '../react-client-shared/utils/Log';
 
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { HelperText, Paragraph, TextInput } from 'react-native-paper';
 import DateSelect from './DateSelect';
 import SingleSelect from './SingleSelect';
 import CustomMultiSelect from './CustomMultiSelect';
 import CustomRange from './CustomRange';
 import CustomPhoneInput from './CustomPhoneInput';
+import CustomHelperText from './CustomHelperText';
 
 import { FormItem } from '../react-client-shared/utils/Message';
 
@@ -157,9 +158,12 @@ const SwitchType: React.FC<{
         maxLength={item.max_length || undefined}
         returnKeyType="done"
       />
-      <HelperText type="error" visible={props.errors[item.name] !== ''}>
-        {props.errors[item.name]}
-      </HelperText>
+      <CustomHelperText
+        type={props.errors[item.name] ? 'error' : 'info'}
+        helperText={props.errors[item.name] || ''}
+        maxLength={item.max_length}
+        minLength={item.min_length}
+      />
     </>
   );
 };

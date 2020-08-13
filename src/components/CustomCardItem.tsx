@@ -1,4 +1,6 @@
 import React from 'react';
+
+import Hyperlink from 'react-native-hyperlink';
 import { View } from 'react-native';
 
 import { Media } from './Media';
@@ -55,9 +57,14 @@ export const CustomCardItem = (props: {
         )}
         {item.src && <Media src={item.src} />}
         <Card.Content>
-          {item.title && <Title>{item.title}</Title>}
-          {item.subtitle && <Subheading>{item.subtitle}</Subheading>}
-          {item.description && <Paragraph>{item.description}</Paragraph>}
+          <Hyperlink
+            linkDefault
+            linkStyle={{ color: 'blue', textDecorationLine: 'underline' }}
+          >
+            {item.title && <Title>{item.title}</Title>}
+            {item.subtitle && <Subheading>{item.subtitle}</Subheading>}
+            {item.description && <Paragraph>{item.description}</Paragraph>}
+          </Hyperlink>
         </Card.Content>
         <Card.Actions style={{ flexWrap: 'wrap' }}>
           {item?.actions?.map((action, i) => {

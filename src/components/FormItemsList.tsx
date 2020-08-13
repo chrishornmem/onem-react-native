@@ -27,8 +27,8 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 import { Loader } from './Loader';
-
-const SwitchType = React.lazy(() => import('./SwitchType'));
+import SwitchType from './SwitchType';
+//const SwitchType = React.lazy(() => import('./SwitchType'));
 
 function ItemList({
   mtText,

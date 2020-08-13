@@ -1,13 +1,8 @@
 import React, { Suspense } from 'react';
 import { Video } from 'expo-av';
+import Hyperlink from 'react-native-hyperlink'
 
-import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { MessageContext } from '../react-client-shared/reducers/messageState';
 
@@ -24,7 +19,6 @@ import { Footer } from './Footer';
 import { CustomCardItem } from './CustomCardItem';
 import { ResponsiveImage } from './ResponsiveImage';
 import { Media } from './Media';
-import { LoaderContext } from '../context/loaderContext';
 
 const SwitchMenuItem: React.FC<{
   item: MenuItem;
@@ -134,7 +128,12 @@ const SwitchMenuItem: React.FC<{
             />
           )}
           {!item.card && item.description && !item.src && (
-            <Paragraph>{item.description}</Paragraph>
+            <Hyperlink
+              linkDefault
+              linkStyle={{ color: 'blue', textDecorationLine: 'underline' }}
+            >
+              <Paragraph>{item.description}</Paragraph>
+            </Hyperlink>
           )}
           {!item.card && item.src && <Media src={item.src} />}
         </>
