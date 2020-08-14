@@ -266,8 +266,6 @@ function ItemList({
   const [isFocussed, setIsFocussed] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  console.log("form loaded");
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

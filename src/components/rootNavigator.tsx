@@ -307,9 +307,8 @@ export const RootNavigator = () => {
   const formattedMessage = JSON.stringify(messageState?.message);
 
   const messageContext = React.useMemo(() => {
-    console.log(messageState)
     return { messageState, messageAction };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formattedMessage]);
 
   const connectionContext = React.useMemo(() => {
